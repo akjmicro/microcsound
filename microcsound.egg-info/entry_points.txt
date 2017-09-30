@@ -1,0 +1,3 @@
+[console_scripts]
+microcsound = microcsound.main:main
+

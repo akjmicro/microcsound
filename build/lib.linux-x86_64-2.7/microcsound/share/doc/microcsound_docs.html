@@ -1,0 +1,993 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0055)http://www.csounds.com/journal/issue15/microcsound.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <title>Csound Journal</title>
+  <link href="./microcsound_docs_files/csoundJournal.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<div id="wrap">
+<div id="navigation">CSOUND JOURNAL: <a
+href="http://www.csounds.com/journal/index.html">Home</a> | <a
+href="http://www.csounds.com/journal/issue15/index.html">Issue 15</a>
+</div>
+<div id="header">
+<h2>Microcsound</h2>
+<h3>a plain-text score language and interactive real-time Csound front-end
+for microtonalists (and others)</h3>
+Aaron Krister Johnson<br>
+akjmicro AT gmail.com</div>
+
+
+<div id="content">
+
+<h2>Introduction
+</h2>
+
+<p><i>Microcsound</i> is a command-line tool that serves as a general purpose
+  Csound score-generation front-end, as well as a real-time interactive
+  performance shell.  It started life as an early ASCII-notation to MIDI
+  parser/compiler called <i>et_compose</i>, which later became
+  <i>micro_composer</i>.  I finally decided to take MIDI out of the picture
+  and focus on Csound-centric functionality; hence the latest evolutionary
+  branch being called Microcsound.
+</p>
+
+<p>Microcsound was developed to ease the pain of writing contrapuntal and
+harmonic music by hand in the standard Csound score format, where each event
+follows the next in a non-musician friendly vertical page fashion.  The
+standard Csound score format makes the confluence of different musical
+layers difficult to parse, since most most musicians read layers of music
+within a score with time laid out horizontally across the page rather than
+vertically.  The solution is a front-end which would translate these more
+intuitively seen, horizontal text layers, called a <em>Microcsound
+score</em>, into the SCO format that Csound works with, bridging a
+communication gap between human composer and computer friendly formats. 
+</p>
+
+<p>Microcsound is used in four modes from the command line: </p>
+<ul>
+  <li>translate a user-given Microcsound score file and output Csound score text to screen</li>
+  <li> translate a user-given Microcsound score file and call Csound to render a WAV file</li>
+  <li>translate a user-given Microcsound score file and call Csound to render
+    in real-time (provided the instruments are not too complex for real-time
+    rendering for the processor)</li>
+  <li>use as an interactive shell which interprets Microcsound score events
+  in a read-eval-output type loop, calling Csound between reads to render in
+  realtime</li>
+</ul>
+<p>A special feature of Microcsound that is particularly useful for microtonalists
+  (which explains the name of the script) is that one can represent just intonation
+  in ratio notation, as well as having two modes of symbolic notation to express
+  any arbitrary equal division of the octave (or even non-octave). Possible uses
+  of this feature include generating fully realized microtonal or justly-intoned
+  musical works, creating test tones for guide tracks of acoustic instruments,
+  demonstrating principles of musical tuning in a straightforward way using a
+  friendly syntax, experimenting with flexibly tuned sonorities and auditioning
+  microtonal intervals and chords, and tuning a real-world acoustic instrument
+  to an alternate tuning. (The author has done precisely this with his kalimbas).</p>
+
+<p>Since Microcsound is simply a Python script designed to function in a command-line
+  environment and avoids a GUI, it might appeal to those who like lean shell
+  environments to work from without the overhead of a GUI, or even to those who
+  would just want a clean and simple way to do their Csound work. Also, using
+  Microcsound's interactive shell mode is a quick, convenient and easy to understand
+  a way of auditioning any arbitrary microtonal sonority, one which transcends
+  the limitations of more traditional ways such as setting up and retuning standard
+  MIDI software synthesizers. This is true for those who do not have or are not
+  interested in generalized keyboard setups for microtonal experiments and composition,
+  and for whom dragging and dropping operations slow down their flow. Nevertheless,
+  for those who want the features of a full GUI front-end environment, Microcsound
+  can be adapted (as hinted to me by Csound guru Steven Yi) in the future to
+  integrate with Yi's <i>blue</i> composition environment, giving users both
+  GUI and quick non-GUI advantages simultaneously. 
+</p>
+
+<p> For composers who want to script algorithmic compositions, Microcsound's
+syntax should make it easy to do so.  With modest programming experience, it
+is fairly trivial to implement any number of designs that output valid
+Microcsound score.  The author has experimented along such lines many times
+using the Python language.  </p> <p>&nbsp;</p> <h2>I.  Basics of use </h2>
+
+<h3>Downloading and Installing
+</h3>
+
+<p>Microcsound is available at <a
+href="http://www.untwelve.org/microcsound">http://www.untwelve.org/microcsound</a>. 
+There is a choice between a gzipped-tarball (.tgz) for use with Linux or
+OSX, and a ZIP (.zip) file for use with Windows.  The Linux version is the
+primary version developed by the author; the ZIP version has small changes
+to the source code to conform to the Windows system.  Mac users should use
+the Linux version, since they will share a very similar Unix-type base code. 
+Anyone with questions, suggestions, comments, or needs help with
+installation can contact the author for further assistance.  </p>
+
+<p>After uncompressing the chosen archive file, Linux and OSX users must
+edit the <code>microcsoundYYYYMMDD.py</code> script to set some system
+variables.  You will need to edit the values of <code>orc_dir</code> and
+possibly some other variables towards the top of the script between where it
+says "EDIT DEFAULTS HERE" and "END USER EDITING".  Microcsound, among other
+things, needs to know where to find Csound orchestras and whether or not to
+use the supplied <code>microcsound.orc</code>.  In addition, you may set
+command-line settings when calling Csound from Microcsound (i.e what buffer
+settings you would typically use, etc.).  </p>
+
+<p>On the Linux version, after editing the values in the Microcsound script
+itself, you can try the <code>install.py</code> script by typing the
+following at the command-line prompt:</p> <pre>./install.py</pre> <p>This
+script will ask some questions interactively.  (You may find that the
+script's defaults do not work well for your setup and that it needs editing
+to reflect variables and assumptions true for your operating system and
+file-system.) Once answered, these questions serve to fill in certain
+install variables.  The script will then install Microcsound and some
+optional files based on the data provided.  </p>
+
+<p>Windows users should use the <code>microcsoundYYYYMMDD_windows.py</code>
+script.  Windows version users will still have to edit the defaults at the
+top of the file in the same fashion as mentioned for the Linux version
+above, but there are slight differences that make it easier for you: there
+are no references to the readline library, which does not exist in Windows,
+and the temporary directory is named <code>"/temp"</code> instead of the
+Linux version's <code>"/tmp</code>".  </p>
+
+<p>Supplied with the program is a starter Csound orchestra
+<code>8bit.orc</code> that allows you to get up and running with some
+decent-sounding 8bit/chiptune instruments right away.  The script also
+serves to show some stepping off points for exploring your own instrument
+designs.  It is beyond the scope of this article to fully explain each
+instrument in the supplied orchestra.  The orchestra code is reasonably well
+commented, and anyone familiar with the basics of Csound orchestra files and
+instrument design should be ready to grasp what is immediately available for
+use with Microcsound.  </p>
+
+<h3>Invoking the program
+</h3>
+
+<p>Using the program involves invoking the Microcsound script from a command
+line shell—typically, a BASH terminal in Linux or Mac, or a CMD shell in
+Windows.  As mentioned there are four modes of operation: score-only render,
+WAV render, real-time render, and interactive.  You can get some helpful
+usage information by typing <code>microcsound -h</code> at the prompt: </p>
+
+<pre>akj@myhost:~$ microcsound -h
+Usage: microcsound [options] [input_file.mc]
+This is microcsound version 20110407
+Options:
+-h, --help            show this help message and exit
+-o OUTPUT_WAVE_FILE, --output=OUTPUT_WAVE_FILE
+optional wave file output name
+-s, --score-only      only generate a score to stdout, do not post-process
+it with csound
+-r, --real-time        render audio in real-time
+-i, --interactive     use an interactive prompt, render audio in real-time as
+well, does not work when -s is also specified
+-t, --stdin           read text from stdin
+-v, --debug           turn on debug mode
+--orc=ORC_FILE        specify an orchestra file for csound to use, which is		
+                      not the default (microcsound.orc)
+</pre>
+
+<p>The options are somewhat self-explanatory, but I will clarify: the normal
+mode of operation is to invoke Microcsound followed by the name of a given
+<code>.mc</code> file, a text file that contains Microcsound score. 
+Microcsound will take the <code>.mc</code> file, generates a temporary
+Csound .SCO file, and then run Csound with the .SCO file with the default or
+designated Csound .ORC file.  The output will be saved as a WAV file in the
+the current directory, using the same pre-extension basename of the
+<code>.mc</code> file, but replacing <code>.mc</code> with
+<code>.wav</code>.  For example, running <code>"microcsound
+mypiece.mc"</code> will produce a WAV file called <code>mypiece.wav</code>
+in the same directory as where the Microcsound script is called.  To do the
+same thing, but hearing the audio from your soundcard rather than saved to a
+wave file, use the <code>-r</code> switch (real-time), e.g. 
+<code>"microcsound -r mypiece.mc"</code>.  If the variables at the top of
+the Microcsound script are correctly configured for the setup of your
+system, the result will be a real-time performance of your <code>.mc</code>
+file.  </p>
+
+<p>If you would rather see the Csound score yourself and not have
+Microcsound do the final compilation to audio, use the <code>-s</code>
+switch.  This will print the generated Csound score to the screen.  On
+Linux/Unix, you can then capture this output to a file using a pipe
+redirect, e.g.  <code>"microcsound -s mypiece.mc &gt; mypiece.sco"</code>. 
+You can then compile the captured .SCO file yourself with Csound, using an
+orchestra of your choice, e.g.  <code>"csound myorc.orc mypiece.sco"</code>
+along with whatever Csound options you want.  This is useful if you need to
+further process a score in ways other than Microcsound provides, or to debug
+the output of Microcsound itself if you are running into difficulties.  </p>
+
+<p>The use of the interactive shell by invoking <code>"microcsound
+-i</code>" deserves special mention.  The only difference between this and
+the standard syntax for Microcsound scores is that the prompt needs to know
+when to stop expecting input and to actually process your commands into
+real-time audio.  This is done by typing "<code>done</code>" and hitting
+ENTER or RETURN at the prompt as soon as all the musical information has
+already been entered.  You will see then the Csound command being called
+from within the shell, and start realizing the performance.  Some examples
+that follow the explanation of Microcsound syntax will suffice to get you up
+to speed in understanding how this works.  </p>
+
+<h3>Understanding the syntax of Microcsound
+</h3>
+
+<p>Microcsound scores are comprised of <i>voices</i>. These are best thought
+of as layers of a texture, similar to the idea of a <em>channel</em> in one
+of the 16 channels of MIDI.  Everything that happens in Microcsound happens
+in the context of a voice, including setting up variables (such as tempo)
+and mixer values.  (Note: All variables in Microcsound are somewhat global
+in their scope.  If a voice does not explicitly set a variable, it will use
+the value that was previously set the previous voice, i.e.  voice 2 will use
+the values of voice 1 unless set explicitly.) A good practice is to use
+voice 1 to set up variables that all other voices will share.  One
+exception, however, is the case of setting tempo.  If you need to implement
+a gradual tempo change between note events, it might be best to use whatever
+voice of the texture that has the fastest-moving rhythmic values to put your
+<code>t=</code> tempo settings.  </p> <p>The beginning of every line in a
+Microcsound score has a <i>voice indicator</i>.  This is simply the integer
+number of the voice (1 or greater) followed by a colon then a space, for
+example: </p>
+
+<pre>1: div=31 i=1 c d e f g
+</pre>
+
+<p>This line begins with a voice indicator for voice 1 (indicated by "1: "),
+then indicates to use a 31-edo (equal division of the octave) scale and
+perform with Csound instrument 1 a single 5-note scale.  </p>
+
+<p>Multiple simultaneous voices are indicated by using a new higher number.
+The Microcsound rendering engine scans the file, looking for the first "1:
+", merges all events that fall under this voice, interprets them and
+generates the Csound score.  After reaching the end of the last event in
+that voice, the engine starts over with the next highest number, "2: ".  You
+can skip voice numbers and for example next use "3: ", as Microcsound will
+always count in order and will simply skip voice numbers it does not find. 
+Once it finds the next voice, the clock is reset to time "0", and it will
+interpret all of the events for the next voice and generate the Csound
+score.  After the final voice is interpreted, all the voices are sorted and
+written to a temporary Csound score, which is then compiled with the
+appropriate orchestra of instruments to either produce a WAV file output,
+real-time audio output, or a Csound score for further processing elsewhere. 
+</p>
+
+<p>There are 4 types of commands or syntactical elements in the Microcsound
+language that can happen in any voice: comments, variable setting commands,
+events, and time-stamp manipulations.  </p>
+
+<p><b>1. Comments</b> are simply lines which begin with '<code>#</code>'. 
+Comments are ignored by Microcsound and can contain any information that
+helps the composer.  Comments end when a carriage return or newline of text
+is found.  For example: </p>
+
+<pre>#This is an EXAMPLE of a Microcsound comment</pre>
+
+<p>In addition to comments, a bar line (indicated by "|", the pipe character) is also ignored:</p>
+<pre>1: div=31 i=6 "0.02%0.02%4%0.5" 1/8 c2 de f2 1/12 gab | 1/8 c'2 g2 e2 g2 | c4 z4 ||</pre>
+<p>Composers may find it useful to use barlines to visually group parts of
+their music into measures for ease of human-readability.</p>
+
+<p><b>2. Variables</b> are important in setting up parameters for your
+performance.  There are two types of variables: <em>set</em> variables that
+are defined with <code>x=y</code> syntax and those that use a special
+syntax.  Variables that use the <code>x=y</code> syntax include include:</p>
+
+<table border="1" align="center">
+    <tbody><tr>
+	<th>Variable</th>
+	<th>Description</th>
+    </tr>
+    <tr><td>t</td><td>tempo</td></tr>
+    <tr><td>div</td><td>division of the octave to use for microtones</td></tr>
+    <tr><td>i</td><td>Csound instrument number</td></tr>
+    <tr><td>pan</td><td>stereo panning</td></tr>
+    <tr><td>mix</td><td>instrument volume in the mix</td></tr>
+    <tr><td>gv</td><td>Gaussian (random distribution) variance of volume</td></tr>
+    <tr><td>gr</td><td>Gaussian (random distribution) variance of rhythm</td></tr>
+    <tr><td>gs</td><td>stoccato articulation</td></tr>
+</tbody></table>
+
+<p>Setting these variables is simple: in the Microcsound score, surround the
+left and right of the statement with white space, and write
+<code>variable=value</code>, for instance: </p>
+
+<pre>1: i=1 t=110 div=31 pan=0.4 gv=0.01
+</pre>
+
+<p>declares that voice 1 will use instrument 1, set the tempo (globally for
+  all voices, since that is the nature of tempo) to 110 BPM, set the octave
+  to be divided into 31 equal pitches, sets the instrument just left of
+  center (pan is 0-1, hard left to hard right), and declares that we want a
+  little randomness in the attack volumes, the effect of which varies
+  according to the design of the instrument.</p>
+
+<p>Variables that use special syntax are: <i>default running rhythmic
+values</i> (8th notes, quarter notes, etc.), <i>attack volume defaults</i>,
+and <i>extra p-field variables</i>.  </p>
+
+<p><i>Default rhythmic values</i> are indicated by typing a fraction
+surrounded by white space.  For example, typing <code>1/8</code> will
+indicate that the next events are running 8th notes.  Typing any numerator
+and denominator works, so rather complex rhythmic structures are at your
+disposal.  However, Microcsound will not keep track for you how things line
+up if you get crazy with this--it is your job to do the math and not get
+lost!  Typing <code>7/15</code> is perfectly legal for your Nancarrow-esque
+experiments in tied groups of 7 15th notes, but take care that you know
+where you will end up with regard to other voices, if this is a concern. 
+</p>
+
+<p><i>Attack values</i> are indicated by <code>@</code> immediately followed
+by a floating-point number between zero and one hundred, e.g. 
+<code>@06</code>, which represents '6' or <code>@6</code> which represents
+'60'.  '@99' would be the loudest possible attack volumn.  There are ways
+to crescendo and decrescendo using ramps, but this will be discussed later
+in this article.  </p>
+
+<p>Finally, it should be explained that an instrument's <i>extra p-field
+variables</i> (p8 and above) can also be accessed from within Microcsound
+using a special syntax.  P-fields 1-7 are reserved by Microcsound for
+instrument, onset, duration, attack, pitch, pan, and mix values.  The rest
+of an instrument's p-fields, if they exist at all, must be set using a
+double quote statement with the values separated by a "%" character, e.g.  I
+might have a classic ADSR envelope values being set with pfields 8-11, and
+would use "0.02%3.7%0.01%0.4".  Once an extra p-field variable is set, it
+remains in use until set by another value or a ramp is found("&lt;"). 
+Currently, all of the extra p-fields must be set at once, and individual
+extra p-fields may not be accessed individually for manipulation. 
+Fortunately, none of my work has ever needed such a feature, but it may be
+crucial for others, so it is a planned TODO in a future version. 
+<b>UPDATE:</b> as of version 20170214, you can alter/update an individual
+p-field value <b>once the double-quote string has been declared</b>, via the
+syntax "p##=...", for example you can set p10's value like so: </p>
+
+<pre>1: i=1 "0.02%3.6%0%0.3" c d p10=0.5 e</pre>
+
+<p>Expanding on our previous example, we can add some new set variables:
+</p>
+
+<pre>1: i=1 t=110 div=31 pan=0.4 gv=0.01 1/8 @0.67 "0.02%3.6%0%0.3"
+</pre>
+
+<p>The above statement, in addition to what was already explained, sets the
+default running rhythmic value to an 8th note, the default attack to 0.67,
+and sets a hypothetical set of p-fields 8-11 (such as values for an ADSR
+envelope) in instrument 1 (remember, the 'i=1' statement earlier) to 0.02,
+3.6, 0 and 0.3.  </p>
+
+<p><b>3. Events </b> are the heart of Microcsound and consist of <i>notes,
+chords, rests, </i>and<i> triggers</i>.  When working with equal divisions
+of the octave (or non-octave, for that matter), notes can be indicated
+freely by an <code>octave.degree</code> syntax, or a standard
+diatonic-letter syntax closely akin but not freely interchangeable to the
+ABC standard.  These two standards, numeric or diatonic-letter, can be mixed
+and matched, but it is probably best to stick with one or the other to avoid
+confusion.  </p>
+
+<p>When working with just intonation, one simply uses a <code>N:D</code>
+notation scheme, where N and D are integers, regardless of the value of the
+<code>div</code> variable, which is ignored for all <code>N:D</code> events. 
+</p>
+
+<p><i>Notes</i> are explained below in the subsections according to the 3
+styles one may indicate them.  After every note event, the clock is advanced
+by the currently set rhythmic length (indicated by a fraction, 1/8 being the
+default) multiplied by the optional length or tie indicators attached to any
+given note event.  </p>
+
+<p><i>Chords</i> are really best understood as a way of stopping the default
+advancement of the clock by the use of brackets.  This allows an
+accumulation of sonorities that would otherwise follow one another in time
+to happen simultaneously, which we commonly understand as a chord.  A
+opening bracket, "[" stops the clock, while a closing bracket "]" starts it
+again.  Thus, a C-major chord is indicated: [ceg], or with optional spaces:
+[c e g]</p>
+
+<p><i>Rests</i> are simply indicated by <code>r</code> or <code>z</code>
+followed immediately (without white space, that is) by an optional integer
+multiplier.  </p>
+
+<p><i>Triggers</i> are special cases where one sets <code>div=0</code>. When
+triggers are used, Microcsound will generate Csound notes without pitch
+information, instead passing on the designated values as p5 in the generated
+notes.  This is useful when you want to simply turn on a mixer with a dummy
+p5 variable (as is the case in the provided <code>microcsound.orc</code>
+mixer instrument), use a percussion-based instrument as a drum set, trigger
+a MIDI note number in a special instrument, etc.  A typical way to use drum
+tracks from Microcsound would be to set <code>div=0</code> and have a helper
+percussion instrument function as a virtual drum set, where the p5 values
+are sent to trigger a given percussive instrument.  See the code for
+instrument 120 in the <code>microcsound.orc</code> file for an example of
+how this is done.  </p>
+
+<p><b>4. Time-stamp manipulations</b> involve being able to set, or reset,
+the beat number that Microcsound is currently on.  More is explained on this
+in the subsection below "Using the time pointer for one-off counterpoint".
+</p>
+
+<h3>Note-event syntax within Microcsound and choosing the right one for the job
+</h3>
+
+<p>Explaining the various note syntaxes is important, as this is the heart
+of using Microcsound for musical work.  Here we will expound the various
+ways of symbolically representing pitch available to you when using
+Microcsound.
+</p>
+
+<h4>i. Traditional diatonic letters
+</h4>
+
+<p>Perhaps simplest from the traditional point-of-view is the use of
+standard diatonic-letter notation.  The format for such an event is:
+</p>
+
+<pre>[articulation][accidental(s)]note_letter[octave][length][dash4tie][possible_legato_closer]
+</pre>
+
+<p>where anything in brackets is optional (only the note base letter, a-g is
+absolutely required).  The optional parts of a note's parameters occur in
+the above order.  </p>
+
+<ul> <li>Articulation can either be "<code>.</code>" for staccato or
+"<code>(</code>" to start a legato phrase.  Staccato must be indicated for
+every note where staccato is wanted, and staccato status will not hold for
+followup notes.  However, legato, indicated by "<code>(</code>" will start a
+phrase grouping where the duration will be converted to negative values in
+the actual Csound score, for use by legato instruments.  It is beyond the
+scope of this article to explain how to use or design legato instruments in
+Csound, but I refer the reader to two excellent articles: one in the Csound
+book<a
+href="http://www.csounds.com/journal/issue15/microcsound.html#ref2">[1]</a>,
+the other in the Csound Journal<a
+href="http://www.csounds.com/journal/issue15/microcsound.html#ref3">[2]</a>. 
+<br> </li> 
+
+<li>Accidentals are as per below:
+<ul><li>= is a natural</li>
+<li>^ is a sharp</li>
+<li>_ is a flat</li>
+<li>__ is a double flat</li>
+<li>^^ is a double sharp </li>
+<li>^/2 is a half-sharp</li>
+<li>_/2 is a half-flat (for quarter-tone manipulations, results vary depending on the setting of <code>div</code>)</li>
+</ul>
+</li>
+</ul>
+
+<p>In addition, there are  microtonal accidentals that can additionally modify the pitch:
+</p>
+
+<ul>
+<li>/ is up   a syntonic (81/80) comma</li>
+<li>\ is down a syntonic (81/80) comma</li>
+<li>&gt; is up a septimal (64/63) comma</li>
+<li>&lt; is down a septimal (64/63) comma</li>
+<li>! is up an undecimal (33/32) comma</li>
+<li>¡ is down an undecimal (33/32) comma (upside down exclamation point)</li><li>? is up a tridecimal (1053/1024) comma </li>
+<li>¿ is down a tridecimal (1053/1024) comma (upside down question mark)</li>
+</ul>
+
+<p>The above modifiers are an alternative way to compose in (quasi-) just
+intonation besides the use of rational notation, which will be explained
+later, provided that one uses an appropriate <code>div</code> with high
+enough frequency resolution, or a medium sized EDO (equal division of the
+octave) number that well-represents the just intonation ratios one is
+interested in.  For instance, the author has composed little works in
+virtual 7-limit just intonation using Microcsound by setting
+<code>div=171</code>, because 171-edo contains excellent approximations to
+all just intervals with prime factors of 7 and under.  </p>
+
+<ul>
+<li>notes are simply the diatonic note letters, in lower case, a-g. (e.g.
+'a' or 'g')</li>
+<li>the octave is present when the note in question needs to be outside the
+middle C octave.  Commas are used for pitches below that octave, and
+apostrophes are used for above.  So for example, a 5-octave span of
+different C pitches might be, from bottom to top: <code>c,, c, c c'
+c''</code></li>
+<li>the length of the note, rhythmically speaking, may be modified by a use
+of an integer immediately appended to it without white space, and this value
+is multiplied by the running rhythmic length to produce the final note
+length, e.g.  <code>^g''4</code> would mean "g-sharp two octaves above
+middle-g held for 4 counts of the current running value"</li>
+<li>a tie to the next pitch is indicated by a dash, e.g.
+<code>_g3-_g2</code> would be a g-flat held for 5 counts total</li>
+<li>an optional closing parenthesis  indicates the end of a legato phrase,
+e.g.  (cdef) (gabc') would indicate two legato phrases of 4 notes each. 
+</li>
+</ul>
+
+<p>Further examples are given within the next section, with comparison to
+Numerical syntax; in addition, you can refer to the larger <a
+href="http://www.csounds.com/journal/issue15/microcsound.html#microcsoundExample">score
+example</a> at that end of this article.  </p>
+
+<h3>ii. Numerical syntax
+</h3>
+
+<p>Numerical syntax is simpler from a certain point of view: all pitches are
+numerals.  Middle-C is given the number 0, and the behavior of all other
+numbers is dependent on how the <code>div</code> variable is set and whether
+the octave has been set by previous "<code>oct.deg</code>" events.  Numbers
+lower than middle-C are negative, e.g.  -7, and optionally, one may use an
+"<code>[oct.]deg</code>" syntax that is also fairly simple: one indicates a
+pitch with a number (positive or negative), preceded by an optional octave
+plus decimal point (middle C is octave number 5).  </p>
+<p>In more formal terms, this syntax is:</p>
+<pre>[articulation][octave]deg[optional legato end][ties, using 't', spaces allowed]
+</pre>
+<ul>
+<li>Similar to diatonic notation, we have "<code>.</code>" for staccato or
+"<code>(</code>" for legato, otherwise non-legato is default.  </li>
+<li>The <code>octave</code> is optional, and is an integer showing which C
+to C octave the pitch should sound at, middle-C starting octave number 5. 
+</li>
+<li><code>deg</code> is the only mandatory indicator in numeric syntax; it
+indicates which degree of an EDO scale should sound, 0 being middle-C.  The
+value can be negative, indicating a scale degree below middle-C.  This
+parameter can be un-interpreted as an EDO pitch as need be by setting
+<code>div=0</code>; as mentioned, this is useful for things like setting
+mixer levels, triggering MIDI notes in special instruments, etc.</li>
+<li>The optional legato ending mark,  "<code>)</code>", unlike in diatonic
+notation, must come next, before any tied length modifiers.  In future
+versions of Microcsound, this may not be necessary, but for now, this syntax
+greatly simplifies the underlying work the software has to do.</li>
+<li>Finally, one can extend the number of beats in a given note by writing
+any number of "<code>t</code>" characters, with or without spaces between
+them.  Think of this as a way to extend the note length analogous to making
+the rectangle bigger in piano-roll type sequencer software.  Each
+"<code>t</code>" character extends the previous note by one (current
+default) beat.  For example "<code>5 t t t</code>" is a note event on the
+fifth degree of the tuning and of 4 beats length total since there are three
+"<code>t</code>" characters following the original note.  </li>
+</ul>
+
+<p>Putting it all together with examples, here is a simple C-major scale in different
+  syntax standards (notice the occasional use of staccato and legato articulation:</p>
+
+<p>Standard diatonic-letter syntax:</p>
+<pre>1: i=1 t=110 div=31 pan=0.4 gv=0.01 1/8 @0.67 "0.02%3.6%0%0.3"
+1: c d .e .f .g a b (c' d' e' f' g' a' b' c'')t t t
+</pre>
+<p>or numerical syntax:</p>
+<pre>1: i=1 t=110 div=31 pan=0.4 gv=0.01 1/8 @0.67 "0.02%3.6%0%0.3"
+1: 0 5 .10 .13 .18 23 28 (31 36 41 44 49 54 59 62)t t t
+</pre>
+<p>or  numerical syntax w/use of <code>oct.deg</code> helpers:</p>
+
+<pre>1: i=1 t=110 div=31 pan=0.4 gv=0.01 1/8 @0.67 "0.02%3.6%0%0.3"
+1: div=31 5.0 5 10 13 18 23 28 (6.0 5 10 13 18 23 28 7.0)t t t
+</pre>
+<p>Taking out the now-understood first line, which sets up variables, and
+just illustrating now the note-events, coming down from middle C, we could
+do:</p>
+
+<pre>1: c b, a, g, f, e, d, c, b,, a,, g,, f,, e,, d,, c,,,
+</pre>
+
+<p>or</p>
+<pre>1: 0 -3 -8 -13 -18 -21 -26 -31 -34 -39 -44 -49 -52 -57 -62
+</pre>
+<p>or</p>
+
+<pre>1: 5.0 4.28 23 18 13 10 5 0 3.28 23 18 13 10 5 0
+</pre>
+<p>Notice that the octave before the decimal point, once set, becomes
+optional, until we want to switch to a different octave.</p>
+
+<h3>
+iii. Rational notation
+</h3>
+
+<p>Rational notation allows the user to compose and experiment with just
+intonation and rational intonation quite easily.  The syntax is similar to
+numerical notation in its ordering, except that one doesn't have octave
+decimals: to get above or below the middle-C octave, you multiply the first
+number (the <em>numerator</em>) of a given ratio by a power of 2 (2, 4, 8,
+16....) to get a higher octave, or do the same to the 2nd number (the
+<em>denominator</em>) to get a pitch from a lower octave.  For instance,
+middle-C is <code>1:1</code>, so c' above middle-C is <code>2:1</code> and
+the octave below middle-C is <code>1:2</code>.</p>
+
+<p>The syntax, more formally, is:</p>
+<pre>[articulation]N:D[legato end][ties]    
+</pre>
+<ul>
+<li>Again, articulation can be "<code>.</code>" for staccato and
+"<code>(</code>" for legato start.</li>
+<li>N:D indicates a frequency ratio to middle-C, which is assumed to be 1:1.
+To change to a different pitch to use as 1:1, one can use a special variable
+called the <em>key</em> variable.  One can set the reference tone to 2:3
+(exactly a perfect 4th below middle-C) by issuing the command
+<code>key=2:3</code> right before writing any more rational note
+events.</li>
+<li>The <code>legato end</code>, "<code>)</code>" again signifies the end of
+a legato-slurred phrase.  Like in diatonic notation, it must come before any
+ties indicated with a "<code>t</code>".</li>
+<li>Finally, one or more "<code>t</code>'s" can occur to lengthen the note,
+again like lengthening the rectangle on a piano-roll style sequencer
+interface.</li>
+</ul>
+
+<p>As before, we can illustrate rational notation using a simple example
+again, this time a scale in the virtual key of 'D', which we arrive at by
+using the "<code>key=</code>" variable setting:</p>
+	
+<pre># below we see the selection of a harpsichord soundfont preset
+# eighth notes are used
+1: i=12 "7%.01%.03" 1/8 key=9:8 1:1 9:8 5:4 4:3 3:2 5:3 15:8 2:1 t t t 
+# now we rest for four bests and then hit a full D-major chord with 6 notes.
+# it's still D-major b/c we haven't reset the 'key=' statement to equal "1:1"
+# we use a whole note value to make the chord a bit longer:
+1: r4 1/1 [1:2 3:4 1:1 5:4 3:2 2:1]
+</pre>
+<h3>A note on ramping
+</h3>
+
+<p>One of the nice features of the Csound score is the use of the
+"<code>&lt;</code>" character to set a p-field value to to the value
+interopolated between a starting and ending value found in other notes. 
+This allows behavior such as smooth interpolations of parameters for
+crescendi/diminuendi, signal panning, etc.  Ramping is available for all of
+the p-fields except for p5, which by the architecture of Microcsound,
+actually triggers the instrument and causes the time-line itself to advance. 
+To do ramping of any p-field parameter, you must ensure that you supply a
+defined starting and ending value, as the rest is taken care of by Csound. 
+There are a couple of things to remember as well: although p4 (attack) can
+be ramped by using "<code>@&lt;</code>", pan and mix must use the less-than
+sign surrounded by double quotes: e.g.  <code>pan="&lt;"</code>'.  A simple
+C-major scale below demonstrates simultaneously a crescendo as well as
+ramped panning:</p>
+
+<pre>#below is the setup for a chip-tune instrument from 'microcsound.orc'
+1: div=12 i=6 ".02%.02%2%.6" mix=0.65 t=90
+#now we pan left to right and crescendo simultaneously
+#csound performs all the interpolation for us.
+1: @0.3 pan=0.1 c, @&lt; pan="&lt;" d, e, f, g, a, b, @0.8 pan=0.9 c4
+</pre>
+
+<h3>Using the time pointer for one-off counterpoint
+</h3>
+
+<p>Time in Microcsound by default marches along by beats, advancing whenever
+an event (<em>note, chord, rest </em>or<em> trigger</em>) is found in the
+score.  However, there are certain instances where one may wish to modify
+the onset time so that one may go back and add additional layers of
+counterpoint, or set the clock to zero, etc.</p>
+
+<p>For example, suppose we have a piece where a  monophonic voice sometimes
+need to split off into dyads.  We could set the time pointer to return N
+beats back by using "<code>&amp;-N</code>", for example, to go three beats
+back and add an addiontal line of notes, we would type
+"<code>&amp;-3</code>" (without quotes) in our <code>.mc</code> score.</p>
+
+<p>Here is an example of the beginning of the melody "For the Beauty of the
+Earth", set to contain a bit of 2-voice counterpoint towards the end, but
+"embedded" in one voice:</p>
+
+<pre>#example showing resetting the time pointer
+1: div=19 i=10.1 "0.02" (g2 ^fg a2g2 c'2 c'2 b4) | e2 ^f2 g2 e2 d2 .d2 d4 
+1: &amp;-16 i=10.2 "0.02" (c4 b,4 a,b,c2 b,2 g,2) ||
+</pre>
+
+<p>Notice the use of fractional instruments so that Csound understands how
+to handle multiple instances of legato ties using the same instrument within
+the orchestra.</p>
+
+<p>The time pointer can be set to the beginning of the piece by using
+"<code>&amp;0</code>", and if you need to advance the clock for any reason
+(typically, there are not many reasons for doing so) you can use
+"<code>&amp;+N</code>" where N is the number of beats of the current
+rhythmic time value (set with the fraction, as explained earlier).  In
+addition, one can go to any arbitrary beat number based on the default
+rhythmic length times the value of N.  For instance, if the current rhythmic
+value is <code>"1/8"</code>, to go to the 17th eighth note in the piece, you
+could write "<code>&amp;17</code>".</p>
+<p>&nbsp;</p>
+
+<h2>II. Odds and Ends
+</h2>
+
+<h3>More on Interactive mode (calling the script with "microcsound -i")
+</h3>
+
+<p>The use of interactive mode by calling Microcsound from the command line
+with the "<code>-i</code>" switch is helpful for various situations,
+including making quick sketches, performing acoustic demonstrations or
+tuning demonstrations, creating droning sonorities, tuning an acoustic
+instrument with a suite of test tones, etc.  The difference as far as the
+script is concerned is that all the input data flows in a classic
+read/eval/output loop familiar to anyone who has used an interpreted
+programming language from LISP onwards, such as Python, Scheme, PERL, Basic,
+Lua, etc.  To end the read cycle and have Microcsound evaluate and output
+sound based on the text entered from the live interpretive loop, you must
+write "<code>done</code>" followed by a return all alone on a single line. 
+The example below illustrates a C-major chord being played by one voice
+while a 2nd voice descends a scale at the same time.  You will also get a
+feel for the kind of output you are likely to see from Microcsound, and from
+the background engine messages from Csound, which is ultimately being called
+to process the sound:</p>
+<pre>akj@myhost:~$ microcsound -i
+microcsound--&gt; 1: div=1 i=12 "7%.01%.02" t=90 1/1 [1:2 3:4 1:1 5:4 3:2 2:1]
+microcsound--&gt; 2: i=12 "7%.01%.02"  1/16 1:1 t 15:16 5:6 3:4 2:3 5:8 9:16 1/2 1:2 
+microcsound--&gt; done
+microcsound--&gt; done
+ok...processing sound now
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+aha, a ratio!
+executing csound command...
+PortMIDI real time MIDI plugin for Csound
+virtual_keyboard real time MIDI plugin for Csound
+dBFS level = 32768.0
+Csound version 5.13 (float samples) Jan 19 2011
+libsndfile-1.0.21
+orchname:  /home/akj/audio_and_midi/csound_files/microcsound.orc
+scorename: /tmp/Microcsound.sco
+rtmidi: PortMIDI module enabled
+rtaudio: ALSA module enabled
+orch compiler:
+	opcode	tieStatus	i		
+	opcode	AllPass	a	a	
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+	instr		
+sorting score ...
+	... done
+Csound version 5.13 (float samples) Jan 19 2011
+displays suppressed
+dBFS level = 1.0
+del: -11959.000000
+del: -11959.000000
+del: -11959.000000
+del: -11959.000000
+del: -11959.000000
+del: -11959.000000
+del: -4870.000000
+del: -2346.000000
+del: -4308.000000
+del: 1902.000000
+del: 1902.000000
+del: 1902.000000
+del: 1902.000000
+del: 1902.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -12000.000000
+del: -619.000000
+del: -8154.000000
+del: -8154.000000
+del: -10057.000000
+del: -10057.000000
+del: -10057.000000
+del: -10057.000000
+del: -10057.000000
+del: -10057.000000
+del: -10057.000000
+del: -10057.000000
+del: -10057.000000
+orch now loaded
+audio buffered in 2048 sample-frame blocks
+ALSA: -B 4096 not allowed on this device; using 3763 instead
+ALSA: -b 1881 not allowed on this device; using 940 instead
+writing 8192-byte blks of shorts to dac
+SECTION 1:
+Score finished in csoundPerform().
+inactive allocs returned to freespace
+end of score.		overall amps:  0.73753  0.73753
+	overall samples out of range:        0        0
+errors in performance
+8192-byte soundblks of shorts written to dac
+microcsound--&gt; 
+</pre>
+
+
+<p>The example above shows an interactive session in Microcsound, displaying
+a mixture of Microcsound text output followed by text output from Csound
+itself.  As you can see, anything that can be done in Microcsound's normal
+compilation mode can be accomplished in real-time interactive mode as well,
+provided that the computer processor and memory can handle the real-time
+audio processing power required.  </p>
+
+<h3>Tips for creating instruments that work with Microcsound
+</h3>
+
+<p>When designing Csound instruments that will work with Microcsound, all of
+the p-fields from 1-7 must be reserved for the following values: </p>
+<ul>
+  <li>p1 - instrument number</li>
+  <li>p2 - onset<br>
+  </li>
+  <li>p3 -   duration (becomes negative for legato articulation)</li>
+  <li>p4 - attack</li>
+  <li>p5 - pitch (supplied in HZ by the interpretation of notation within Microcsound)</li>
+  <li>p6 -  pan </li>
+  <li>p7 - mix </li>
+</ul>
+<p>You  should always start with these in mind when designing new
+instruments or modifying old ones to integrate into a Microcsound orchestra. 
+As mentioned in the section regarding <i>extra p-field variables</i>, you
+can optionally use p8 and up for any number of additional instrument
+parameters.  Here is a list of tips to remember when designing
+instruments:</p>
+
+<ol>
+<li>Make your instrument expect any pitch from p5 to be in hertz (HZ), or
+cycles-per-second.  Microcsound converts all note pitch values to HZ itself,
+and no conversion will need to be done in your Csound code, such as using
+<code>cps2pch</code>.</li>
+<li>The instruments should accept (expect) an <code>attack</code> value
+between 0.0 and 1.0.  This is typical for <code>0dbfs</code> type design,
+anyway.</li>
+<li>When designing a legato instrument, remember that Microcsound will send
+a negative duration to p3.  Please refer to Steven Yi's excellent tutorial
+regarding legato instruments in Csound ("<a
+href="http://www.csounds.com/journal/issue15/microcsound.html#ref3">Exploring
+Tied Notes in Csound</a>"--listed in the references) to know what kinds of
+code (including user-defined opcodes) to use to handle legato without
+glitches.  Another point to remember is to <i>use fractional instruments
+from the Microcsound score when you have multiple parts using the same
+instrument, and at least one of them is legato.</i> Csound needs to know
+that each instrument is a unique voice, and it must know what legato ties
+belong to what voices.  An example of using a fractional instrument in
+Microcsound would be setting the instrument variable like so:
+"<code>i=3.1</code>" ....  note the decimal point setting this instance of
+instrument 3 apart from all others.</li>
+<li>Pan  and Mix are also designed to use a range of 0.0-1.0, so please
+design all instruments accordingly for that range of values.</li>
+<li>One tip for using percussion instruments with Microcsound: use
+<em>helper</em> instruments.  For example, if you look at the code of
+<code>microcsound.orc</code>, you will find instrument 120, a virtual drum
+kit.  This instrument reads p5 from Microcsound and triggers another
+instrument in the orchestra which corresponds with the value of p5 plus some
+constant (remember, this is possible due to using <code>div=0</code>).  This
+allows actions analogous to MIDI key numbers to trigger certain drums. 
+Anyone familiar with MIDI GM drum kits will find such a paradigm
+comfortable.  </li>
+</ol>
+<h3>Using a mixer or effect instrument from within Microcsound</h3>
+
+<p>One of the things we often use in our music work is a mixer. In Csound,
+mixers are often implemented using the ZAK patching system or one of the
+newer channel opcodes.  The author is more familiar with the former means
+and as a result the default orchestra file, <code>microcsound.orc</code>,
+uses the ZAK patching system to set up a default mixer and reverb effect. 
+When you look at the <code>microcsound.orc</code> file, you will find that
+instrument 200 is a mixer, instrument 201 is a helper instrument that
+triggers the mixer instrument (instrument 200) to turn on, and instrument
+202 provides the user the ability to modify the 4 variables that are used in
+the mixer instrument: dry volume, wet (reverb) volume, reverb amount and
+reverb cutoff frequency.  These variables are accessed via p8-p11 for
+instrument 202, and are modifiable from Microcsound by using the percent
+sign syntax, as discussed above.  For example, setting the dry volume to 1,
+wet volume to 0.5, reverb amount to 0.75 and reverb cutoff frequency to 7430
+would mean writing the following extra p-field string before any trigger
+event: "<code>1%0.5%0.75%7430</code>" (double quotes here are literal--they
+must be typed!) </p>
+<p><em><strong>Note:</strong> the use of instrument 201 to turn on the ZAK
+mixer in <code>microcsound.orc</code> is no longer necessary and deprecated
+as of Microcsound version 20100803--there is a default score trigger for
+this instrument within Microcsound.</em></p>
+
+<p>The following example assumes the use of <code>microcsound.orc</code> and
+illustrates the changing of the default settings for the mixer/reverb global
+ZAK instrument from within Microcsound:</p>
+<pre>1: div=0 i=202 "1%0.5%0.8%5500" 1
+1: &amp;0 i=11 1:1 2:1 t t 7:4 t 1/16 3:2 7:4 5:3 7:4 t t 1/8 3:2 5:4 9:8 1/2 1:1
+</pre>
+<h3><a name="microcsoundExample"></a>An example of Microcsound at work
+</h3>
+
+<p>Users interested in digging deeper into how Microcsound  works in a
+larger piece than the examples shown here can look at the source file for
+the author's own work, <i>Puhlops and Laugua's Big Adventure</i>, written in
+17-edo back in summer of 2009.  You can find the .mc source file at: </p>
+<p><a
+href="http://untwelve.org/static/microcsound/PuhlopsAndLaugua.mc">http://untwelve.org/static/microcsound/PuhlopsAndLaugua.mc</a></p>
+
+<p>A pre-rendered version is available for listening at:</p>
+
+<p><a
+href="https://soundcloud.com/aaron-krister-johnson/puhlops-and-lauguas-big-adventure">https://soundcloud.com/aaron-krister-johnson/puhlops-and-lauguas-big-adventure</a></p>
+
+<p>The nice thing about this example is that it not only illustrates using microtonality
+  with typical synth instruments one might design in Csound; it also illustrates
+  using drum techniques from within Microcsound.</p>
+<p>&nbsp;</p>
+
+<h2>Conclusion
+</h2>
+
+<p>I hope you will try Microcsound and find, as I have, that it is a useful
+and flexible front-end that speeds up and eases the process of using and
+interacting with Csound.  While Microcsound is designed for composers
+interested in microtonality and Csound, I do hope that there is sufficient
+evidence that this program is general enough to serve the needs of many
+others, including those interested in didactic demonstrations, algorithmic
+music, creating musical sketches, and using reference pitches easily from
+the command line.
+</p>
+<p>&nbsp;</p>
+<h2>Acknowledgments
+</h2>
+
+<p>I would like to thank Steven Yi for inviting me to write about my
+software for the Csound Journal.  Also, a big thank you to the once, current
+and future developers of Csound itself, for your magnificent and generous
+code, code that creates one of the most powerful pieces of audio software
+the planet has yet seen.</p>
+<p>&nbsp;</p>
+<h2>References</h2>
+<ol>
+
+  <li> <a name="ref1"></a>Richard Dobson, "Designing Legato
+  Instruments,"<u>The Csound Book: Perspectives in Software Synthesis, Sound
+  Design, Signal Processing, and Programming</u>, 2nd Edition, pp.  171-186,
+  2001.
+
+  </li>
+  <li><a name="ref2"></a>Steven Yi, "Exploring Tied Notes in Csound", <a
+  href="http://www.csounds.com/journal/2005fall/tiedNotes.html">Csound
+  Journal</a>, Issue 1, 2005.</li>
+  
+  <li> Microcsound Homepage: <a
+  href="http://www.untwelve.org/microcsound">http://www.untwelve.org/microcsound</a><br>
+    
+  </li>
+  
+</ol>
+</div>
+</div>
+
+</body>
+</html>
