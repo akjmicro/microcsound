@@ -1,4 +1,3 @@
-README.txt
 setup.py
 microcsound/__init__.py
 microcsound/constants.py

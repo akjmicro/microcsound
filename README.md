@@ -7,13 +7,13 @@ ____________
 
 * Choose as install method, *pip* or *git* (pip is recommended if you have it)
 
-*From pip:*
+**From pip:**
 ```
     pip install microcsound
 ```
 __________________________________
 
-*From git:*
+**From git:**
 
 Either download from the 'dist' directory here, or:
 ```

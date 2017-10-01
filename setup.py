@@ -14,7 +14,7 @@ setup(
         
     packages=find_packages(),
     package_data={
-        '': ['share/data/*', 'share/doc/*']
+        '': ['LICENSE.txt', 'README.md', 'share/data/*', 'share/doc/*']
     },
     entry_points={
         'console_scripts': [
