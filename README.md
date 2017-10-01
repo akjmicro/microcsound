@@ -5,17 +5,28 @@ ____________
 
 * Make sure you have Python and Csound installed
 
-From pip:
+* Choose as install method, *pip* or *git* (pip is recommended if you have it)
+
+*From pip:*
 ```
     pip install microcsound
 ```
+__________________________________
 
-From git:
+*From git:*
 
 Either download from the 'dist' directory here, or:
 ```
-    git clone https://github.com/akjmicro/micrcsound master
+    git clone https://github.com/akjmicro/microcsound
 ```
+Once downloaded, in the 'microcsound' directory:
+```
+    python setup.py install
+```
+___________________________________
+
+* Files will be installed into a Python lib directory on your system. E.G.,
+on a Linux system, something like _/usr/local/lib/Python3.6_
 
 * You may also want to edit the variables at the top of the 'constants.py'
 script itself, especially the first 'orc_dir' variable. Open it with an editor, and change the four variables towards
