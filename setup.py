@@ -10,7 +10,7 @@ setup(
                  'microtonality quite well!'),
     author='Aaron Krister Johnson',
     author_email='akjmicro@gmail.com',
-    url='untwelve.org/microcsound',
+    url='https://github.com/akjmicro/microcsound',
         
     packages=find_packages(),
     package_data={

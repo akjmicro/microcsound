@@ -84,8 +84,7 @@ def live_loop_in(test_fp=None):
                     return pinbuff
                 else:
                     pinbuff += phrase + '\n'
-        except (KeyboardInterrupt, EOFError):  
-            print()
+        except (KeyboardInterrupt, EOFError):
             print('Bye!')
             exit()
         
@@ -222,7 +221,7 @@ def main():
         csound_command = (constants.NORMAL_CSOUND_COMMAND_STUB
                           + verbosity_string
                           + ' -o %s %s/%s /tmp/microcsound.sco'
-                          % (out_wav, ORC_DIR, args.orc_file))
+                          % (out_wav, constants.ORC_DIR, args.orc_file))
 
     if args.interactive:
         rt_mode = True
@@ -235,7 +234,6 @@ def main():
             temp_sco_file.write('%s\n%s' % (outbuf[0], outbuf[1]))
             temp_sco_file.close()
             system(csound_command)
-            print()
     else:
         if args.filename:
             the_file = open(args.filename)
@@ -254,7 +252,6 @@ def main():
             temp_sco_file.write('%s\n%s' % (outbuf[0], outbuf[1]))
             temp_sco_file.close()
             system(csound_command)
-            print()
-
+            
 if __name__ == '__main__':
     main()

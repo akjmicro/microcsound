@@ -173,10 +173,11 @@ def parser(inst_line):
 
         #### finally, a place to put the output text:
         state_obj.outstring = (state_obj.outstring
-             + "i%1.1f %1.3f %1.3f  %s  %s  %s  %s  %s\n"
+             + 'i%1.1f %1.3f %1.3f  %s  %s  %s  %s  %s\n'
                 % (state_obj.instr, on_time, duration,
                    attack, pitch, state_obj.pan, state_obj.mix,
-                   ' '.join(state_obj.xtra)))
+                   ' '.join(state_obj.xtra).replace('\"', ''))
+            )
 
         ### update grid_time for next event, but only if not in chord status
         ### '[]' mode:

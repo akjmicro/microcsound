@@ -59,8 +59,7 @@ def handle_instrument_parameter(event):
 def handle_many_instrument_parameters(event):
     ''' handle a group parameter event for an instrument '''
     
-    all_params = event.split('%')
-    state_obj.xtra = all_params
+    state_obj.xtra = event.split('%')
 
 
 def handle_JI_transpose(event):
@@ -99,7 +98,7 @@ def handle_chord_status(event):
         state_obj.chord_status = 1
     else:
         state_obj.chord_status = 0
-        state_obj.grid_time += (state_obj.length * length_factor)
+        state_obj.grid_time += (state_obj.length * state_obj.length_factor)
 
 
 def handle_pedal(event):
@@ -266,4 +265,3 @@ def handle_JI_notation(event):
     tie = 0
 
     return pitch, length_factor, articulation, tie
-
