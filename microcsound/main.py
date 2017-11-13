@@ -109,9 +109,13 @@ def sanity_tests():
     
     ## now test the live looper function. We use a mock input via a StringIO
     ## object instead of 'raw_input', which requires human intervention.
-    import StringIO
+    
+    try:
+        from StringIO import StringIO
+    except:
+        from io import StringIO 
     my_test_string = "1: i=7 t=60 div=17\n1: c d e f g'\ndone\n"
-    fp = StringIO.StringIO(my_test_string)
+    fp = StringIO(my_test_string)
     result = live_loop_in(fp)
     result_2 = process_buffer(result, rt_mode=True)
     assert 'i200 0 -1\ni7.0 0.000 0.250  0.66  261.62557  0.5  1  \n' \
@@ -122,7 +126,7 @@ def sanity_tests():
     state_obj.__init__()
 
     my_test_string2 = '1: i=7 t=60 div=17\n1: .0 (6.1 2 .3)\ndone\n'
-    fp = StringIO.StringIO(my_test_string2)
+    fp = StringIO(my_test_string2)
     result = live_loop_in(fp)
     result_2 = process_buffer(result, rt_mode=True)
     # restore state:
@@ -133,7 +137,7 @@ def main():
     ''' The place where the magic begins '''
 
     argparser = argparse.ArgumentParser(
-                         epilog='This is microcsound v.20170929',
+                         epilog='This is microcsound v.20171113',
                          )
     argparser.usage = '''microcsound [-h] [--orc orc_file] [-v] 
     [-i | 

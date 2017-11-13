@@ -5,7 +5,7 @@ from os import path
 
 setup(
     name="microcsound",
-    version="2017.0929",
+    version="2017.1113",
     description=('A tool for writing csound scores that can handle ' + 
                  'microtonality quite well!'),
     author='Aaron Krister Johnson',
