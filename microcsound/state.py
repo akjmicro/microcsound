@@ -15,6 +15,7 @@ class State(object):
                             ### added starting zak mixer statement on
                             ### 2010-08-03
                             ### instead of an empty starting string
+        self.tie_dict = {}
         self.reset_voice()
     
     def reset_voice(self):
@@ -31,7 +32,6 @@ class State(object):
         self.key = 1
         ## rhythm:
         self.length_factor = 1
-        self.tie_dict = {}
         self.tie = 0
         ## articulation
         self.staccato_length = .2

@@ -12,6 +12,8 @@ from microcsound import constants
 from microcsound.parser import parser, PARSER_PATTERN
 from microcsound.state import state_obj
 
+__all__ = ['process_buffer', 'live_loop_in',
+           'sanity_tests', 'main']
 
 def process_buffer(inbuffer, rt_mode=False):
     ''' split the whole string buffer into individual voice lines
@@ -79,7 +81,10 @@ def live_loop_in(test_fp=None):
         try:
             pinbuff = 'i200 0 -1\n'
             while 1:
-                phrase = raw_input('microcsound--> ')
+                try:
+                    phrase = raw_input('microcsound--> ')
+                except:
+                    phrase = input('microcsound--> ')
                 if phrase.strip() == 'done':
                     return pinbuff
                 else:
@@ -137,7 +142,7 @@ def main():
     ''' The place where the magic begins '''
 
     argparser = argparse.ArgumentParser(
-                         epilog='This is microcsound v.20171113',
+                         epilog='This is microcsound v.20171114',
                          )
     argparser.usage = '''microcsound [-h] [--orc orc_file] [-v] 
     [-i | 

@@ -151,7 +151,6 @@ def parser(inst_line):
             lf = tie_info[1] + state_obj.length_factor
             attack = tie_info[2]
             state_obj.pan = tie_info[3]
-
         ### calculate duration:
         if state_obj.pedal_down:
             duration = state_obj.arrival - on_time
