@@ -85,9 +85,9 @@ def handle_rest(event):
     
     factor = event[1:]
     if factor != '':
-        length_factor = int(factor)
+        state_obj.length_factor = int(factor)
     else:
-        length_factor = 1
+        state_obj.length_factor = 1
     state_obj.grid_time += (state_obj.length * state_obj.length_factor)
 
 
@@ -107,7 +107,6 @@ def handle_pedal(event):
     if 'PD' in event:
         state_obj.pedal_down = True
         ev = re.match(r'PD(?P<arrival>\d{1,3})', event)
-    
         state_obj.arrival = (int(ev.group('arrival'))
                              * state_obj.length) + state_obj.grid_time
     else:
@@ -178,6 +177,8 @@ def handle_symbolic_notation(event):
     else:
         tie = 0
 
+    state_obj.length_factor = length_factor
+    
     return pitch, length_factor, articulation, tie
 
 
@@ -226,6 +227,8 @@ def handle_numeric_notation(event):
     ### we've already handled the ties ourselves:
     tie = 0
 
+    state_obj.length_factor = length_factor
+
     return pitch, length_factor, articulation, tie
 
 
@@ -263,5 +266,7 @@ def handle_JI_notation(event):
 
     ## we've already handled the tie:
     tie = 0
+
+    state_obj.length_factor = length_factor
 
     return pitch, length_factor, articulation, tie

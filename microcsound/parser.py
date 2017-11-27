@@ -27,7 +27,7 @@ PARSER_PATTERN = re.compile(
 
 def parser(inst_line):
 
-    ### before parsing this voice, set up the starting points:
+    # before parsing this voice, set up the starting points:
     
     ## reset SOME of the state variables:
     state_obj.reset_voice()
@@ -112,10 +112,9 @@ def parser(inst_line):
         ## possibly we have a JI transposition:
         pitch = float(pitch) * float(state_obj.key)
 
-        ### OK, if we have finally gotten a pitch event, we know what's what
-        ### now. If we've gotten this far in the loop,
-        ### we can calculate stuff....
-        lf = length_factor
+        # OK, if we have finally gotten a pitch event, we know what's what
+        # now. If we've gotten this far in the loop,
+        # we can calculate stuff....
         on_time = state_obj.grid_time + (gauss(0, 0.001)
                                          * state_obj.gaussian_rhythm
                                          * state_obj.tempo * 0.01666)
@@ -129,29 +128,29 @@ def parser(inst_line):
         else:
             attack = state_obj.default_attack
 
-        ### this next block take into account whether the note is a tie or a
-        ### regular note event, and takes appropriate actions:
+        # this next block take into account whether the note is a tie or a
+        # regular note event, and takes appropriate actions:
         if state_obj.tie:
-            ### if note is not in the list of tied notes, add it.
+            # if note is not in the list of tied notes, add it.
             if pitch not in state_obj.tie_dict[state_obj.instr]:
                 state_obj.tie_dict[state_obj.instr][pitch] = [
                     on_time, state_obj.length_factor, attack, state_obj.pan
                     ]
-            else:                      ### if it IS there already,
-                                       ### add duration to it.
+            # if it IS there already, add duration to it.
+            else:                      
                 state_obj.tie_dict[state_obj.instr][pitch][1] += (
                     state_obj.length_factor)
             continue
+        # or if the note was a tie, and is now not tied, that means
+        # it's time actually get its endpoints and send it to the
+        # output list:
         if pitch in state_obj.tie_dict[state_obj.instr]:
-            ### or if the note was a tie, and is now not tied, that means
-            ### it's time actually get its endpoints and send it to the
-            ### output list:
             tie_info = state_obj.tie_dict[state_obj.instr].pop(pitch)
             on_time = info[0]
-            lf = tie_info[1] + state_obj.length_factor
+            length_factor = tie_info[1] + state_obj.length_factor
             attack = tie_info[2]
             state_obj.pan = tie_info[3]
-        ### calculate duration:
+        # calculate duration:
         if state_obj.pedal_down:
             duration = state_obj.arrival - on_time
         else:
@@ -161,16 +160,12 @@ def parser(inst_line):
                             + (gauss(0, 0.001) * state_obj.gaussian_staccato
                             * state_obj.tempo * 0.01666))
             elif state_obj.articulation == 'legato':
-                duration = (state_obj.length * lf) * -1  ### negative p3 for
-                                               ### legato instruments
+                # negative p3 for legato instruments
+                duration = (state_obj.length * length_factor) * -1
             else:
-                ### non-legato (state_obj.tempo * 0.01666?)
-                duration = (state_obj.length * lf) # - \
-                           #(state_obj.tempo * non_legato_space / 60.) - \
-                           #(gauss(0, .001) * state_obj.gaussian_rhythm * \
-                           # state_obj.tempo * 0.01)
+                duration = (state_obj.length * length_factor) 
 
-        #### finally, a place to put the output text:
+        ## finally, a place to put the output text:
         state_obj.outstring = (state_obj.outstring
              + 'i%1.1f %1.3f %1.3f  %s  %s  %s  %s  %s\n'
                 % (state_obj.instr, on_time, duration,
@@ -178,7 +173,7 @@ def parser(inst_line):
                    ' '.join(state_obj.xtra).replace('\"', ''))
             )
 
-        ### update grid_time for next event, but only if not in chord status
-        ### '[]' mode:
+        # update grid_time for next event, but only if not in chord status
+        # '[]' mode:
         if not state_obj.chord_status:
-            state_obj.grid_time += (state_obj.length * lf)
+            state_obj.grid_time += (state_obj.length * length_factor)
