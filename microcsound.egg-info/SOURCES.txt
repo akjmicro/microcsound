@@ -1,3 +1,4 @@
+README.rst
 setup.py
 microcsound/__init__.py
 microcsound/constants.py
@@ -6,6 +7,7 @@ microcsound/helpers.py
 microcsound/main.py
 microcsound/parser.py
 microcsound/state.py
+microcsound/tests.py
 microcsound.egg-info/PKG-INFO
 microcsound.egg-info/SOURCES.txt
 microcsound.egg-info/dependency_links.txt
