@@ -11,7 +11,7 @@ DEFAULT_ORC_FILE = 'microcsound_basic.orc'
 NORMAL_CSOUND_COMMAND_STUB = '/usr/bin/csound -d --messagelevel=0 ' \
                              '--nodisplays -W'
 ##### The beginning stub Csound command for realtime use:
-RT_CSOUND_COMMAND_STUB = '/usr/bin/csound -d --messagelevel=0 --nodisplays  '\
+RT_CSOUND_COMMAND_STUB = '/usr/bin/csound '\
                          '-b2048 -B2048 -odac'
 ##### END USER EDITING
 

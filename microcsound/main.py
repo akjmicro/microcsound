@@ -12,7 +12,16 @@ from microcsound import constants
 from microcsound.parser import parser, PARSER_PATTERN
 from microcsound.state import state_obj
 
-__all__ = ['process_buffer', 'live_loop_in', 'main']
+__all__ = ['process_buffer', 'live_loop_in',
+           'sanity_tests', 'main']
+
+# cover differences between Python2.7 and Python3 for 'raw input':
+
+try: # Python2.7
+    live_input_func = raw_input
+except NameError: # Python3.*
+    live_input_func = input
+    
 
 def process_buffer(inbuffer, rt_mode=False):
     ''' split the whole string buffer into individual voice lines
@@ -60,44 +69,22 @@ def process_buffer(inbuffer, rt_mode=False):
     return state_obj.tempostring, state_obj.outstring
 
 ##### live_loop_in function here:
-def live_loop_in(test_fp=None):
+def live_loop_in():
     ''' a function which handles interactive input. '''
-
-    if test_fp:
-        try:
-            inbuff = 'i200 0 -1\n'
-            while 1:
-                phrase = test_fp.readline()
-                if phrase.strip() == 'done':
-                    test_fp.close()
-                    return inbuff
-                else:
-                    inbuff += phrase + '\n'
-        except (KeyboardInterrupt, EOFError):
-            ## only for testing:    
-            pass
-    else:
-        try:
-            pinbuff = 'i200 0 -1\n'
-            while 1:
-                try:
-                    phrase = raw_input('microcsound--> ')
-                except:
-                    phrase = input('microcsound--> ')
-                if phrase.strip() == 'done':
-                    return pinbuff
-                else:
-                    pinbuff += phrase + '\n'
-        except (KeyboardInterrupt, EOFError):
-            print('Bye!')
-            exit()
-
+    pinbuff = 'i200 0 -1\n'
+    while True:
+        phrase = live_input_func('microcsound--> ')
+        if phrase.strip() == 'done':
+            return pinbuff
+        else:
+            pinbuff += phrase + '\n'
+    return pinbuff    
 
 def main():
     ''' The place where the magic begins '''
 
     argparser = argparse.ArgumentParser(
-                         epilog='This is microcsound version 2017.1127a1',
+                         epilog='This is microcsound v.20171114',
                          )
     argparser.usage = '''microcsound [-h] [--orc orc_file] [-v] 
     [-i | 
@@ -186,15 +173,19 @@ def main():
 
     if args.interactive:
         rt_mode = True
-        while True:
-            state_obj.__init__()
-            live_input = live_loop_in()
-            outbuf = process_buffer(live_input,
-                                    rt_mode=True)
-            temp_sco_file = open('/tmp/microcsound.sco', 'w')
-            temp_sco_file.write('%s\n%s' % (outbuf[0], outbuf[1]))
-            temp_sco_file.close()
-            system(csound_command)
+        try:
+            while True:
+                state_obj.__init__()
+                live_input = live_loop_in()
+                outbuf = process_buffer(live_input,
+                                        rt_mode=True)
+                temp_sco_file = open('/tmp/microcsound.sco', 'w')
+                temp_sco_file.write('%s\n%s' % (outbuf[0], outbuf[1]))
+                temp_sco_file.close()
+                system(csound_command)
+        except KeyboardInterrupt:
+            print('bye!')
+            exit()
     else:
         if args.filename:
             the_file = open(args.filename)
