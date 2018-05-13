@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-## version 20170929. For a list of changes, see the CHANGES file.
+# version 20170929. For a list of changes, see the CHANGES file.
 
 from readline import *
 from sys import stdin, stdout, argv
@@ -24,29 +24,29 @@ except NameError: # Python3.*
     
 
 def process_buffer(inbuffer, rt_mode=False):
-    ''' split the whole string buffer into individual voice lines
-    and feed each line to the event parser '''
-    
+    """Split the whole string buffer into individual voice lines
+    and feed each line to the event parser
+    """
     lines = inbuffer.splitlines()
     voiceline = 1
     current_string = '%i:' % voiceline
-    ### the main loop where the input file is read:
+    # The main loop where the input file is read:
     # the next line searches for the current instrument number
     # in the entire buffer, and only continues when there is
     # one found:
     while re.search(current_string, inbuffer):
-        inst_line = []  #### start a blank string for collection
+        inst_line = []  # start a blank string for collection
         for line_number, line in enumerate(lines, start=1):
-            text = line.rstrip() ### right strip the line
+            text = line.rstrip() # right strip the line
             if re.match(current_string, text):
-                ### strip voice indicator prepending
+                # strip voice indicator prepending
                 text1 = re.sub(r'^[0-9]{1,2}[:]', r'', text)
-                ### get rid of barlines
+                # get rid of barlines
                 text2 = text1.replace('|', '')
-                ### get rid of comments:
+                # get rid of comments:
                 text3 = re.sub(r'(.*)[#]+.*', r'\1', text2)
                 inst_line.append(text3)
-                ### check syntax:
+                # check syntax:
                 errors = PARSER_PATTERN.split(''.join(inst_line))
                 unspaced_errors = ''.join(errors).replace(' ', '')
                 if unspaced_errors != '':
@@ -58,19 +58,19 @@ def process_buffer(inbuffer, rt_mode=False):
                     print(inst_line)
                     if not rt_mode:
                         exit()
-        ## now, parse the complete voice that has been collected:
+        # now, parse the complete voice that has been collected:
         parser(''.join(inst_line))
-        ## advance the voice count and search again at the top of the loop:
+        # advance the voice count and search again at the top of the loop:
         voiceline += 1
         current_string = r'%i:' % voiceline
 
-    ### here is where we finally output the gathered results of the
-    ### parser's work:
+    # Here is where we finally output the gathered results of the
+    # parser's work:
     return state_obj.tempostring, state_obj.outstring
 
-##### live_loop_in function here:
+# live_loop_in function here:
 def live_loop_in():
-    ''' a function which handles interactive input. '''
+    """a function which handles interactive input."""
     pinbuff = 'i200 0 -1\n'
     while True:
         phrase = live_input_func('microcsound--> ')
@@ -81,7 +81,7 @@ def live_loop_in():
     return pinbuff    
 
 def main():
-    ''' The place where the magic begins '''
+    """The place where the magic begins, of course!"""
 
     argparser = argparse.ArgumentParser(
                          epilog='This is microcsound v.20171114',
@@ -123,7 +123,7 @@ def main():
     
     args = argparser.parse_args()
 
-    ### if they don't know what they are doing!
+    # if they don't know what they are doing!
     if len(argv) < 2:
         argparser.print_help()
         exit(0)
@@ -196,7 +196,7 @@ def main():
             outbuf = process_buffer(stdin.read(),
                                     rt_mode=rt_mode)
 
-        ## the end result, which is either a Csound score, or audio:
+        # the end result, which is either a Csound score, or audio:
         if args.score_only:
             stdout.write('%s\n%s' % (outbuf[0], outbuf[1]))
         else:

@@ -26,66 +26,66 @@ PARSER_PATTERN = re.compile(
 
 
 def parser(inst_line):
-
+    """This is the logical heart of the application"""
     # before parsing this voice, set up the starting points:
     
-    ## reset SOME of the state variables:
+    # reset SOME of the state variables:
     state_obj.reset_voice()
 
     for event in PARSER_PATTERN.findall(inst_line):
-        ## a non-event?
+        # a non-event?
         if event == '':
             continue
 
-        ## a variable assignment:
+        # a variable assignment:
         elif re.match(r"(?P<type>div|mix|pan|gr|gv|gs|t|i)[=]"
                       r"(?P<value>(?:[0-9]{1,5}[.]?[0-9]{0,5}|\"<\"))",
                       event):
             handlers.handle_global_variable_event(event)
             continue
 
-        ## an instrument parameter is set:
+        # an instrument parameter is set:
         elif re.match(r"(?:(?:p[89]{1}|p[1-9][0-9])[=](?:[-0-9.<]+))",
                       event):
             handlers.handle_instrument_parameter(event)
             continue
 
-        ## instrument parameters are set all at once:
+        # instrument parameters are set all at once:
         elif re.match(r"(?:\"[-0-9.<%]+\")", event):
             handlers.handle_many_instrument_parameters(event)
             continue
         
-        ## transposition by JI ratio:
+        # transposition by JI ratio:
         elif 'key' in event:
             handlers.handle_JI_transpose(event)
             continue
 
-        ## lengths:
+        # lengths:
         elif re.match(r"(?:\[L:)?[0-9]{1,4}[/][0-9]{1,4}(?:\])?", event):
             handlers.handle_length(event)
             continue
 
-        ## rests:
+        # rests:
         elif event[0] == 'r' or event[0] == 'z' or event[0] == 'x':
             handlers.handle_rest(event)
             continue
 
-        ## chords are enabled by 'stopping the clock':
+        # chords are enabled by 'stopping the clock':
         elif event in '[]':
             handlers.handle_chord_status(event)
             continue
 
-        ## added this for sustain pedal passages:
+        # added this for sustain pedal passages:
         elif event.startswith('PD') or event.startswith('PU'):
             handlers.handle_pedal(event)
             continue
 
-        ## grid time pointer can be changed for 'time travel' :-) :
+        # grid time pointer can be changed for 'time travel' :-) :
         elif event[0] == '&':
             handlers.handle_time_travel(event)
             continue
 
-        ## attack level:
+        # attack level:
         elif event[0] == '@':
             handlers.handle_attack(event)
             continue
@@ -94,22 +94,22 @@ def parser(inst_line):
         ## pitch events : ##
         ####################
 
-        ## ratio notation (JI):
+        # ratio notation (JI):
         elif re.match(r"(?:[.\(])?(?:[0-9]+[:][0-9]+)", event):
             pitch, length_factor, articulation, tie = \
                 handlers.handle_JI_notation(event)
 
-        ## [oct.]degree notation:
+        # [oct.]degree notation:
         elif re.match(r"(?:[.\(])?(?:[0-9]+[.])?(?:[-]?[0-9]+)", event):
             pitch, length_factor, articulation, tie = \
                 handlers.handle_numeric_notation(event)
 
-        ## symbolic diatonic notation:
+        # symbolic diatonic notation:
         else:
             pitch, length_factor, articulation, tie = \
                 handlers.handle_symbolic_notation(event)
 
-        ## possibly we have a JI transposition:
+        # possibly we have a JI transposition:
         pitch = float(pitch) * float(state_obj.key)
 
         # OK, if we have finally gotten a pitch event, we know what's what
@@ -165,7 +165,7 @@ def parser(inst_line):
             else:
                 duration = (state_obj.length * length_factor) 
 
-        ## finally, a place to put the output text:
+        # finally, a place to put the output text:
         state_obj.outstring = (state_obj.outstring
              + 'i%1.1f %1.3f %1.3f  %s  %s  %s  %s  %s\n'
                 % (state_obj.instr, on_time, duration,

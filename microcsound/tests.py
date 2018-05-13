@@ -11,6 +11,7 @@ from microcsound import constants
 from microcsound.parser import parser, PARSER_PATTERN
 from microcsound.state import state_obj
 from microcsound.main import live_loop_in, process_buffer
+from microcsound.helpers import octaves, solfege2et, degree2hz
 
 def dummy_live_input_func(fp):
     def inner(prompt):
@@ -87,5 +88,61 @@ class MicrocsoundTests(unittest.TestCase):
         self.assertIn(expected, result_2[1])
 
 
+class HelperTests(MicrocsoundTests):
+    def test_octaves(self):
+        """tests the simple octaves function"""
+        expected = '0.5849625'
+        # we convert to string to avoid floating-point equality testing
+        # issues:
+        result = str(octaves(1.5))
+        self.assertTrue(result.startswith(expected))    
+
+    def test_solfege2et_middle_c_same(self):
+        """middle c same in any division"""
+        self.assertTrue(solfege2et("c", 17) == solfege2et("c", 19))
+
+    def test_solfege2et_double_division(self):
+        """octave relation by doubling division"""
+        self.assertTrue(solfege2et("d", 34) == solfege2et("d", 17) * 2)
+
+    def test_solfege2et_Csharp_Dflat_superpyth(self):
+        """certain tunings (e.g. 17edo) have the property that C# is HIGHER 
+        than Db; check that here"""
+        self.assertTrue(solfege2et("^c", 17) > solfege2et("_d", 17))
+
+    def test_solfege2et_Csharp_Dflat_meantone(self):
+        """Tests the normal meantone case where C# LOWER than Db"""
+        self.assertTrue(solfege2et("^c", 19) < solfege2et("_d", 19))
+ 
+    def test_solfege2et_octave_up(self):
+        """Tests that octave relationships work"""
+        for div in range(5, 53):
+            self.assertTrue(solfege2et("g'", div) == 
+                            solfege2et("g", div) + div)
+
+    def test_solfege2et_octave_down(self):
+        """Tests that octave relationships work"""
+        for div in range(5, 53):
+            self.assertTrue(solfege2et("g,", div) == 
+                            solfege2et("g", div) - div)
+
+    def test_solfege2et_f_to_g_same_c_to_d(self):
+        """Tests that step relationships work"""
+        for div in range(5, 53):
+            self.assertTrue(solfege2et("g", div) - solfege2et("f", div)
+                         == solfege2et("d", div) - solfege2et("c", div))
+
+    def test_solfege2et_31edo_7_4_ratio(self):
+        """Test the 7/4 ratio in 31edo is the right value"""
+        self.assertTrue(solfege2et("^a", 31) == 25)
+        
+    def test_solfege2et_53edo_11_8_ratio(self):
+        """Test the 11/8 ratio in 53edo is the right value"""
+        self.assertTrue(solfege2et("!f", 53) == 24)
+
+    def test_degree2hz_in_10edo(self):
+        """Tests our degree2hz function"""
+        self.assertTrue(degree2hz(3, 10).startswith('322.0988'))
+        
 if __name__ == '__main__':
     unittest.main()    

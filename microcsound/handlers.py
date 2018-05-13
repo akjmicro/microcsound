@@ -6,12 +6,10 @@ from microcsound import constants, helpers
 from microcsound.state import state_obj
 
 def handle_global_variable_event(event):
-    ''' A function that doesn't return a value but
+    """ A function that doesn't return a value but
     is purposely designed to have side-effects on the state_obj
     global variables
-
-    '''
-    
+    """
     global_variable = event.split('=')
     evtype, val = global_variable[0], global_variable[1]
     if evtype == 't':
@@ -43,8 +41,7 @@ def handle_global_variable_event(event):
 
 
 def handle_instrument_parameter(event):
-    ''' handle an instrument parameter event '''
-    
+    """handle an instrument parameter event"""
     xtext = event.split('=')
     pslot = int(xtext[0].replace('p', '')) - 8
     try:
@@ -57,13 +54,12 @@ def handle_instrument_parameter(event):
 
 
 def handle_many_instrument_parameters(event):
-    ''' handle a group parameter event for an instrument '''
-    
+    """handle a group parameter event for an instrument"""
     state_obj.xtra = event.split('%')
 
 
 def handle_JI_transpose(event):
-    ''' handle a JI transposition event '''
+    """handle a JI transposition event"""
     
     key_ratio_text = event.split('=')[1]
     key_ratio_text_new = key_ratio_text.split(':')
@@ -71,7 +67,7 @@ def handle_JI_transpose(event):
 
 
 def handle_length(event):
-    ''' handle a change in note length '''
+    """handle a change in note length"""
     
     z = re.search(r"(?:\[L:)?([0-9]{1,4})[/]([0-9]{1,4})(?:\])?",
                           event)
@@ -81,7 +77,7 @@ def handle_length(event):
 
 
 def handle_rest(event):
-    ''' handle a rest event '''
+    """handle a rest event"""
     
     factor = event[1:]
     if factor != '':
@@ -92,7 +88,7 @@ def handle_rest(event):
 
 
 def handle_chord_status(event):
-    ''' handle a chord status change event '''
+    """handle a chord status change event"""
     
     if event == '[':
         state_obj.chord_status = 1
@@ -102,7 +98,7 @@ def handle_chord_status(event):
 
 
 def handle_pedal(event):
-    ''' handle a pedalling event '''
+    """handle a pedalling event"""
     
     if 'PD' in event:
         state_obj.pedal_down = True
@@ -114,7 +110,7 @@ def handle_pedal(event):
 
 
 def handle_time_travel(event):
-    ''' handle a time travel event '''
+    """handle a time travel event"""
     
     r = re.search(r"[&]([\-+]?)([0-9]*)", event)
     sign = r.group(1)
@@ -140,7 +136,7 @@ def handle_attack(event):
 
 
 def handle_symbolic_notation(event):
-    ''' interpret and return data from a symbolic note event '''
+    """interpret and return data from a symbolic note event"""
 
     mylist = re.search(r"(?P<articul>[.\(]?)"
                      r"(?P<pitch>(?:\^/2|_/2|[_^=/\\<>!?]|"
@@ -183,7 +179,7 @@ def handle_symbolic_notation(event):
 
 
 def handle_numeric_notation(event):
-    ''' handle and return data from a numeric notation event '''
+    """handle and return data from a numeric notation event"""
 
     mylist = re.search(r"(?P<articul>[.\(]?)"
              r"(?:(?P<oct>[0-9]+)[.])?"
@@ -217,14 +213,14 @@ def handle_numeric_notation(event):
                       * state_obj.div + degree_raw)
             pitch = helpers.degree2hz(degree, state_obj.div)
         else:
-            ### when div=0, pitch is uninterpreted
+            # when div=0, pitch is uninterpreted
             pitch = degree_raw
 
     length_factor = 1
     if tie_phrase:
         length_factor += tie_phrase.count('t')
 
-    ### we've already handled the ties ourselves:
+    # we've already handled the ties ourselves:
     tie = 0
 
     state_obj.length_factor = length_factor
@@ -233,7 +229,7 @@ def handle_numeric_notation(event):
 
 
 def handle_JI_notation(event):
-    ''' handle and return data from a JI note event '''
+    """handle and return data from a JI note event"""
 
     mylist = re.search(r"(?P<articul>[.\(]?)"
                      r"(?P<ratio>[0-9]+[:][0-9]+)"
@@ -264,7 +260,7 @@ def handle_JI_notation(event):
     if tie_phrase:
         length_factor += tie_phrase.count('t')
 
-    ## we've already handled the tie:
+    # we've already handled the tie:
     tie = 0
 
     state_obj.length_factor = length_factor

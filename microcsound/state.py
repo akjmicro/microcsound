@@ -3,9 +3,10 @@
 from microcsound import constants
 
 class State(object):
-    ## storing some state in a safe object interface.
-    ## these are the variables that would be annoying to have to redefine
-    ## for every voice line...
+    """storing some state in a safe object interface. These are the
+    variables that would be annoying to have to redefine for every voice
+    line...
+    """
     def __init__(self):
         self.div = 31
         self.instr = 1
@@ -22,30 +23,30 @@ class State(object):
         self.length = 1/4.
         self.octave = 5
         self.articulation = 'non-legato'
-        ## basic variables
+        # basic variables
         self.grid_time = 0
         self.chord_status = 0
         self.xtra = ['']
-        ## pitch related defaults:
+        # pitch related defaults:
         self.octave = constants.MIDDLE_C_OCTAVE
         self.degree = 0
         self.key = 1
-        ## rhythm:
+        # rhythm:
         self.length_factor = 1
         self.tie = 0
-        ## articulation
+        # articulation
         self.staccato_length = .2
         self.non_legato_space = .02
-        ## pedalling  
+        # pedalling  
         self.pedal_down = False
         self.arrival = 0
-        ## other defaults: 
+        # other defaults: 
         self.default_attack = .66
         self.pan = 0.5
         self.mix = 1
         self.gaussian_rhythm = 0
-        self.gaussian_volume = 0 ### gaussian volume variance
-        self.gaussian_staccato = 0 ### gaussian staccato variance
+        self.gaussian_volume = 0 ## gaussian volume variance
+        self.gaussian_staccato = 0 ## gaussian staccato variance
 
 # we instatiate a singleton:
 state_obj = State()
