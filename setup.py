@@ -5,7 +5,7 @@ from os import path
 
 setup(
     name="microcsound",
-    version="2017.1127a1",
+    version="2018.0711a1",
     description=('A tool for writing csound scores that can handle ' + 
                  'microtonality quite well!'),
     author='Aaron Krister Johnson',
@@ -14,7 +14,7 @@ setup(
         
     packages=find_packages(),
     package_data={
-        '': ['LICENSE.txt', 'README.md', 'README.rst',
+        'microcsound': ['LICENSE.txt', 'README.md', 'README.rst',
              'share/data/*', 'share/doc/*']
     },
     entry_points={
