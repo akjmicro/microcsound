@@ -7,6 +7,7 @@ from sys import stdin, stdout, argv
 from os import system
 import re
 import argparse
+import os
 
 from microcsound import constants
 from microcsound.parser import parser, PARSER_PATTERN
@@ -84,7 +85,7 @@ def main():
     """The place where the magic begins, of course!"""
 
     argparser = argparse.ArgumentParser(
-                         epilog='This is microcsound v.20171114',
+                         epilog='This is microcsound v.20180724',
                          )
     argparser.usage = '''microcsound [-h] [--orc orc_file] [-v] 
     [-i | 
@@ -94,15 +95,15 @@ def main():
     ] '''
     argparser.add_argument('--orc', dest='orc_file',
                            default=constants.DEFAULT_ORC_FILE,
-                           help='specify an orchestra file for csound to use, '\
-                                ' which is not the default (microcsound.orc)')
+                           help='specify an orchestra file for csound to use,'
+                                ' if not the default.')
     argparser.add_argument('-v', '--debug', action='store_true',
                            dest='debug_mode',
                            help='turn on debug mode')
     argparser.add_argument('-i', '--interactive', action='store_true',
                            dest='interactive',
-                           help='use an interactive prompt, render audio '\
-                                'in realtime as well, does not work when '\
+                           help='use an interactive prompt, render audio '
+                                'in realtime as well, does not work when '
                                 'any of -o, -s, or -r are specified')
     # outputs:                            
     argparser.add_argument('-o', '--output', dest='outwav',
@@ -130,8 +131,8 @@ def main():
           
     # wasn't argparser supposed to be helpful and do this kind of 
     # shit for us?
-    if args.interactive and (args.outwav or args.realtime \
-                             or args.score_only or args.text_stdin \
+    if args.interactive and (args.outwav or args.realtime
+                             or args.score_only or args.text_stdin
                              or args.filename):
         raise argparser.error('-i must not be used with any other arguments')
     if args.outwav and (args.score_only or args.realtime):
@@ -148,6 +149,16 @@ def main():
     # okay, we've checked all possible CL parsing errors, let's
     # figure out our working parameters:
     
+    # stuff relating to picking an orchestra file:
+    immediate_orc = './' + args.orc_file
+    directory_orc = constants.ORC_DIR + args.orc_file
+    if os.path.exists(args.orc_file):
+        chosen_orc = args.orc_file
+    elif os.path.exists(immediate_orc):
+        chosen_orc = immediate_orc
+    elif os.path_exists(directory_orc):
+        chosen_orc = directory_orc 
+    
     # show csound parsing messages?
     if args.debug_mode:
         verbosity_string = ''
@@ -158,8 +169,8 @@ def main():
         rt_mode = True
         csound_command = (constants.RT_CSOUND_COMMAND_STUB
                           + verbosity_string
-                          + ' %s/%s /tmp/microcsound.sco'
-                          % (constants.ORC_DIR, args.orc_file))
+                          + ' %s /tmp/microcsound.sco'
+                          % chosen_orc)
     else:
         rt_mode = False
         if args.filename and not args.outwav:
@@ -168,8 +179,8 @@ def main():
             out_wav = args.outwav
         csound_command = (constants.NORMAL_CSOUND_COMMAND_STUB
                           + verbosity_string
-                          + ' -o %s %s/%s /tmp/microcsound.sco'
-                          % (out_wav, constants.ORC_DIR, args.orc_file))
+                          + ' -o %s %s /tmp/microcsound.sco'
+                          % (out_wav, chosen_orc))
 
     if args.interactive:
         rt_mode = True

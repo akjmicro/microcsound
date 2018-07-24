@@ -854,14 +854,14 @@ ipanr = sqrt(p6)
 ipanl = sqrt(1-p6)
 imix = p7
 ;;
-k1  expon  100, .2, 70   	;;freq sweep
-aenv expon 1, .24, 0.01 	;;amp envelope
-kdeclick linsegr 0, .005, 1, 0, 1, 0.01, 0
-;; manual:
+kfrqswp  expon  84, .3, 42   		;; freq sweep
+aenv     expon iamp*4, .4, 0.07	 	;; amp envelope
+kdeclick linsegr 0, .01, 1, 0, 1, 0.01, 0
+;; from the manual:
 ;; a/k/i/res poscil a/k/amp, a/k/cps [, ifn, iphs]
-a1 poscil 5, k1, gisine 	;;swept oscillator (amp used to be 4)
-	zawm a1*iamp*aenv*kdeclick*ipanl*imix, 1 
-        zawm a1*iamp*aenv*kdeclick*ipanr*imix, 2
+a1 poscil aenv, kfrqswp, gisine 	;; swept oscillator
+	zawm a1*kdeclick*ipanl*imix, 1 
+        zawm a1*kdeclick*ipanr*imix, 2
 	endin
 
 ;--------Joaquin\'s snare
@@ -1169,5 +1169,4 @@ zkw ktrig, 4
 	endin
 
 ;; end of instruments ;;
-
  

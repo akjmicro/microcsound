@@ -17,5 +17,4 @@ microcsound/share/data/8bit.orc
 microcsound/share/data/ciconia.mc
 microcsound/share/data/microcsound_basic.orc
 microcsound/share/doc/CHANGES
-microcsound/share/doc/microcsound_docs.html
-microcsound/share/doc/microcsound_tutorial.html
+microcsound/share/doc/microcsound_tutorial.txt
