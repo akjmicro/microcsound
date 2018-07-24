@@ -85,7 +85,7 @@ def main():
     """The place where the magic begins, of course!"""
 
     argparser = argparse.ArgumentParser(
-                         epilog='This is microcsound v.20180724',
+                         epilog='This is microcsound v.20180724a2',
                          )
     argparser.usage = '''microcsound [-h] [--orc orc_file] [-v] 
     [-i | 
@@ -151,12 +151,12 @@ def main():
     
     # stuff relating to picking an orchestra file:
     immediate_orc = './' + args.orc_file
-    directory_orc = constants.ORC_DIR + args.orc_file
+    directory_orc = constants.ORC_DIR + '/' + args.orc_file
     if os.path.exists(args.orc_file):
         chosen_orc = args.orc_file
     elif os.path.exists(immediate_orc):
         chosen_orc = immediate_orc
-    elif os.path_exists(directory_orc):
+    else:    
         chosen_orc = directory_orc 
     
     # show csound parsing messages?
