@@ -12,6 +12,7 @@ PARSER_PATTERN = re.compile(
     r"|(?:key[=][0-9]+[:][0-9]+)"
     r"|(?:\"[-0-9.<%]+\")"
     r"|(?:[&][\-+]?[0-9]*)"
+    r"|(?:[`])"
     r"|(?:\[L:[0-9]{1,4}[/][0-9]{1,4}\])"
     r"|(?:[0-9]{1,4}[/][0-9]{1,4})"
     r"|[rzx][0-9]{0,2}"
@@ -84,6 +85,11 @@ def parser(inst_line):
         elif event[0] == '&':
             handlers.handle_time_travel(event)
             continue
+
+        # report on current time for given voice:
+        elif "`" in event:
+            handlers.handle_time_report(event)
+            continue 
 
         # attack level:
         elif event[0] == '@':

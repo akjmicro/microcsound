@@ -85,7 +85,7 @@ def main():
     """The place where the magic begins, of course!"""
 
     argparser = argparse.ArgumentParser(
-                         epilog='This is microcsound v.20180724a2',
+                         epilog='This is microcsound v.20180727a',
                          )
     argparser.usage = '''microcsound [-h] [--orc orc_file] [-v] 
     [-i | 

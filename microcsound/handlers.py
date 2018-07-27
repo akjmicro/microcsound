@@ -5,6 +5,7 @@ import re
 from microcsound import constants, helpers
 from microcsound.state import state_obj
 
+
 def handle_global_variable_event(event):
     """ A function that doesn't return a value but
     is purposely designed to have side-effects on the state_obj
@@ -60,7 +61,6 @@ def handle_many_instrument_parameters(event):
 
 def handle_JI_transpose(event):
     """handle a JI transposition event"""
-    
     key_ratio_text = event.split('=')[1]
     key_ratio_text_new = key_ratio_text.split(':')
     state_obj.key = float(key_ratio_text_new[0]) / float(key_ratio_text_new[1])
@@ -68,7 +68,6 @@ def handle_JI_transpose(event):
 
 def handle_length(event):
     """handle a change in note length"""
-    
     z = re.search(r"(?:\[L:)?([0-9]{1,4})[/]([0-9]{1,4})(?:\])?",
                           event)
     numerator = float(z.group(1))
@@ -78,7 +77,6 @@ def handle_length(event):
 
 def handle_rest(event):
     """handle a rest event"""
-    
     factor = event[1:]
     if factor != '':
         state_obj.length_factor = int(factor)
@@ -89,7 +87,6 @@ def handle_rest(event):
 
 def handle_chord_status(event):
     """handle a chord status change event"""
-    
     if event == '[':
         state_obj.chord_status = 1
     else:
@@ -111,7 +108,6 @@ def handle_pedal(event):
 
 def handle_time_travel(event):
     """handle a time travel event"""
-    
     r = re.search(r"[&]([\-+]?)([0-9]*)", event)
     sign = r.group(1)
     value = r.group(2)
@@ -122,6 +118,11 @@ def handle_time_travel(event):
     else:
         state_obj.grid_time = state_obj.length * int(value)    
 
+
+def handle_time_report(event):
+    """handle a time reporting event"""
+    print("grid time is currently %f" % state_obj.grid_time)
+    
 
 def handle_attack(event):
     if '.' in event[1:]:
@@ -137,7 +138,6 @@ def handle_attack(event):
 
 def handle_symbolic_notation(event):
     """interpret and return data from a symbolic note event"""
-
     mylist = re.search(r"(?P<articul>[.\(]?)"
                      r"(?P<pitch>(?:\^/2|_/2|[_^=/\\<>!?]|"
                      r"\xc2\xa1|\xc2\xbf)*"
@@ -180,7 +180,6 @@ def handle_symbolic_notation(event):
 
 def handle_numeric_notation(event):
     """handle and return data from a numeric notation event"""
-
     mylist = re.search(r"(?P<articul>[.\(]?)"
              r"(?:(?P<oct>[0-9]+)[.])?"
              r"(?P<deg>[-]?[0-9]+)"
@@ -230,7 +229,6 @@ def handle_numeric_notation(event):
 
 def handle_JI_notation(event):
     """handle and return data from a JI note event"""
-
     mylist = re.search(r"(?P<articul>[.\(]?)"
                      r"(?P<ratio>[0-9]+[:][0-9]+)"
                      r"(?P<legato_end>[\)]?)"

@@ -1,5 +1,5 @@
 sr = 44100
-ksmps = 128
+ksmps = 1
 nchnls = 2
 0dbfs = 1
 
@@ -17,7 +17,7 @@ gismallsine ftgen 0, 0, 4096, 10, 1 ;;; for 'fof', which is comp-intensive
 gisigmoid ftgen 0, 0, 1024, 19, 0.5, 0.5, 270, 0.5
 gioneshot1 ftgen 0, 0, 513, 5, 256, 512, 1 ;;; exponential decay table
 gioneshot2 ftgen 0, 0, 513, 5, 4096, 512, 1 ;;; another exponential decay table
- 
+giorgan    ftgen 0, 0, 8192, 10, 1, 0.5, 0.2, 0.33, 0, 0.1, 0, 0.1 ;; organ waveform 
 ;;; ------------now the UDOs and instruments ----------- ;;;
 
         opcode tieStatus,i,0   ;;; Steven Yi\'s tie opcode
@@ -739,8 +739,8 @@ afltr   moogladder aoscr, kfltenv, ifq
 /* ideas taken from 'guitar.csd' */
 
 idur = p3
-iamp = ampdb(p4 * 60 - 60)    /* amplitude (dB) */
-ipch = p5            /* fundamental */
+iamp = ampdb(p4 * 60 - 60)  /* amplitude (dB) */
+ipch = p5                   /* fundamental */
 ipanr = sqrt(p6)
 ipanl = sqrt(1-p6)
 imix = p7
@@ -755,13 +755,13 @@ ipkpos = p14	/* pick-up position */
 	/* end extra user parameters */
 
 ipi = -4*taninv(-1)  /* constant for PI */
-idts = sr/ipch      /* total delay time (samples) */
-idtt = int(sr/ipch) /* truncated delay time */
-idel = idts/sr      /* delay time (secs) */
+idts = sr/ipch       /* total delay time (samples) */
+idtt = int(sr/ipch)  /* truncated delay time */
+idel = idts/sr       /* delay time (secs) */
 ifac init 1          /* decay shortening factor (fdb gain) */
 is  init 0.5        /* loss filter coefficient */
 igf pow 10, -iwgdec/(20*ipch) /* gain required for a certain decay */
-ig  = cos(ipi*ipch/sr)      /* unitary gain with s=0.5 */
+ig  = cos(ipi*ipch/sr)       /* unitary gain with s=0.5 */
 
 	/* conditional branching based on decay: */ 
 if igf > ig igoto stretch /* if decay needs lengthening */
@@ -781,8 +781,8 @@ is = (is1 < is2 ? is1 : is2)
 
 continue:
 ax1  init 0         /* filter delay variable */
-apx1  init 0         /* allpass fwd delay variable */
-apy1  init 0         /* allpass fdb delay variable */
+apx1  init 0        /* allpass fwd delay variable */
+apy1  init 0        /* allpass fdb delay variable */
 
 idtt = ((idtt+is) > (idts) ? idtt - 1: idtt)
 ifd = (idts - (idtt + is))  /* fractional delay */
@@ -844,6 +844,111 @@ aresr streson aflt, ifreq + ifreq*0.003 + kjitter2, ifdbgain
 	zawm aresr*kenv*kswl*ipanr*imix, 2
 	endin
 
+
+	instr 15 ;; another sophisticated pluck/waveguide instrument
+	         ;; (modification of instr 13)
+
+idur = p3
+iamp = ampdb(p4 * 60 - 60)  /* amplitude (dB) */
+ipch = p5                   /* fundamental */
+ipanr = sqrt(p6)
+ipanl = sqrt(1-p6)
+imix = p7
+	/* extra user parameters */
+iatt = p8
+idec = p9
+isus = p10
+irel = p11
+iexccf = p12
+iexccfhalf = iexccf * 0.5
+iwgdec = p13	/* decay factor in dB/sec */
+ipkpos = p14	/* pick-up position */
+	/* end extra user parameters */
+
+ipi = -4*taninv(-1)  /* constant for PI */
+idts = sr/ipch       /* total delay time (samples) */
+idtt = int(sr/ipch)  /* truncated delay time */
+idel = idts/sr       /* delay time (secs) */
+ifac init 1          /* decay shortening factor (fdb gain) */
+is  init 0.5         /* loss filter coefficient */
+igf pow 10, -iwgdec/(20*ipch) /* gain required for a certain decay */
+ig  = cos(ipi*ipch/sr)        /* unitary gain with s=0.5 */
+
+	/* conditional branching based on decay: */ 
+if igf > ig igoto stretch /* if decay needs lengthening */
+ifac = igf/ig             /* if decay needs shortening */
+goto continue
+
+stretch:       /* this is the LP coefficient calculation to
+                  provide the required decay stretch */       
+icosfun = cos(2*ipi*ipch/sr)
+ia = 2 - 2*icosfun
+ib = 2*icosfun - 2
+ic = 1 - igf*igf 
+id = sqrt(ib*ib - 4*ia*ic)
+is1 = (-ib + id)/(ia*2)
+is2 = (-ib - id)/(ia*2)
+is = (is1 < is2 ? is1 : is2) 
+
+continue:
+ax1  init 0       /* filter delay variable */
+apx1  init 0      /* allpass fwd delay variable */
+apy1  init 0      /* allpass fdb delay variable */
+
+idtt = ((idtt+is) > (idts) ? idtt - 1: idtt)
+ifd = (idts - (idtt + is))  /* fractional delay */
+icoef = (1-ifd)/(1+ifd)  /* allpass coefficient */
+
+/* noise for excitation */
+kexcenv linseg 0, iatt, iamp, idec, isus*iamp, \
+                  idur-(iatt+idec), isus*iamp, 0.01, 0
+anoise pinkish kexcenv
+aexcr tone anoise, (iexccfhalf) + (iamp * iexccfhalf)
+aexcr balance aexcr, anoise
+
+/* wguide */
+kwgamp expsegr 0.001, 0.001, iamp, idur-iatt, iamp, \
+                      irel*2, 0.001  /* envelope */ 
+adump  delayr 1
+adel   deltapn idtt
+aflt = (adel*(1-is) + ax1*is)*ifac /* LP filter   */
+ax1 = adel
+alps  = icoef*(aflt - apy1) + apx1  /* AP filter  */
+apx1 = aflt
+apy1 = alps
+	/* pickup position stuff: */
+ipkpr = (1-ipkpos)*idtt
+ipkpl = ipkpos*idtt
+ipkpr = (ipkpr == 0 ? ipkpl : ipkpr)
+ipkpl = (ipkpl == 0 ? ipkpr : ipkpl)
+apkupr deltapn ipkpr   /* right-going wave pickup */
+apkupl deltapn ipkpl   /* left-going wave pickup */
+
+  delayw alps+aexcr
+aout dcblock (apkupr+apkupl)
+	zawm  aout*kwgamp*ipanl*imix, 1
+        zawm  aout*kwgamp*ipanr*imix, 2
+	endin
+
+
+	instr 16 ;; basic organ
+idur = p3
+iamp = ampdb(p4 * 60 - 60)  /* amplitude (dB) */
+ipch = p5                   /* fundamental */
+ipanr = sqrt(p6)
+ipanl = sqrt(1-p6)
+imix = p7
+    /* user params */
+ifltcf = p8
+ifltq  = p9
+    /* end user params */
+kenv  linsegr 0, 0.01, iamp, 0, iamp, 0.02, 0
+aorg  oscil kenv, ipch, giorgan
+aflt  lowpass2 aorg, ifltcf, ifltq
+	zawm  aflt*ipanl*imix, 1
+        zawm  aflt*ipanr*imix, 2
+	endin
+
 ;;;--------------DRUMS DRUMS DRUMS----------------;;;
 
 	instr 100 ;simple kick drum
@@ -854,7 +959,7 @@ ipanr = sqrt(p6)
 ipanl = sqrt(1-p6)
 imix = p7
 ;;
-kfrqswp  expon  84, .3, 42   		;; freq sweep
+kfrqswp  expon  97, .3, 42   		;; freq sweep
 aenv     expon iamp*4, .4, 0.07	 	;; amp envelope
 kdeclick linsegr 0, .01, 1, 0, 1, 0.01, 0
 ;; from the manual:
