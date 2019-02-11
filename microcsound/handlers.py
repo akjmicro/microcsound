@@ -119,9 +119,18 @@ def handle_time_travel(event):
         state_obj.grid_time = state_obj.length * int(value)
 
 
+def _handle_time_report_helper(grid_time):
+    """Help report the grid time.
+
+    This seems silly, but makes asserting what was called easier in
+    a unit-testing context.
+    """
+    print("Grid time is currently %f" % grid_time)
+
+
 def handle_time_report(event):
     """Handle a time reporting event."""
-    print("grid time is currently %f" % state_obj.grid_time)
+    _handle_time_report_helper(state_obj.grid_time)
 
 
 def handle_attack(event):

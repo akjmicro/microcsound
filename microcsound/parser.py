@@ -27,7 +27,7 @@ PARSER_PATTERN = re.compile(
 
 
 def parser(inst_line):
-    """This is the logical heart of the application"""
+    """This is the logical heart of the application."""
     # before parsing this voice, set up the starting points:
     
     # reset SOME of the state variables:

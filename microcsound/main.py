@@ -22,11 +22,12 @@ try: # Python2.7
     live_input_func = raw_input
 except NameError: # Python3.*
     live_input_func = input
-    
+
 
 def process_buffer(inbuffer, rt_mode=False):
-    """Split the whole string buffer into individual voice lines
-    and feed each line to the event parser
+    """Split the whole string buffer into individual voice lines.
+
+    Then, feed each line to the event parser.
     """
     lines = inbuffer.splitlines()
     voiceline = 1
@@ -71,7 +72,7 @@ def process_buffer(inbuffer, rt_mode=False):
 
 # live_loop_in function here:
 def live_loop_in():
-    """a function which handles interactive input."""
+    """Handle interactive input."""
     pinbuff = 'i200 0 -1\n'
     while True:
         phrase = live_input_func('microcsound--> ')
@@ -79,19 +80,19 @@ def live_loop_in():
             return pinbuff
         else:
             pinbuff += phrase + '\n'
-    return pinbuff    
+    return pinbuff
 
 def main():
-    """The place where the magic begins, of course!"""
+    """Start the magic, of course!"""
 
     argparser = argparse.ArgumentParser(
-                         epilog='This is microcsound v.20180727a',
+                         epilog='This is microcsound v.20190210a',
                          )
-    argparser.usage = '''microcsound [-h] [--orc orc_file] [-v] 
-    [-i | 
+    argparser.usage = '''microcsound [-h] [--orc orc_file] [-v]
+    [-i |
           [[-o output_wav_file | -s, --score-only | -r, --realtime]
            [-t, --stdin | input_mc_filename ]
-          ]  
+          ]
     ] '''
     argparser.add_argument('--orc', dest='orc_file',
                            default=constants.DEFAULT_ORC_FILE,
@@ -105,14 +106,14 @@ def main():
                            help='use an interactive prompt, render audio '
                                 'in realtime as well, does not work when '
                                 'any of -o, -s, or -r are specified')
-    # outputs:                            
+    # outputs:
     argparser.add_argument('-o', '--output', dest='outwav',
                            help='optional wave file output name')
     argparser.add_argument('-s', '--score-only', action='store_true',
                            dest='score_only',
                            help='only generate a score to stdout, '\
                                 ' do not post-process it with csound')
-    argparser.add_argument('-r', '--realtime', action='store_true', 
+    argparser.add_argument('-r', '--realtime', action='store_true',
                            dest='realtime',
                            help='render audio in realtime')
     # inputs:
@@ -121,15 +122,15 @@ def main():
                            help='read text from stdin')
     argparser.add_argument('filename', nargs='?',
                            help="an input '.mc' filename or filepath")
-    
+
     args = argparser.parse_args()
 
     # if they don't know what they are doing!
     if len(argv) < 2:
         argparser.print_help()
         exit(0)
-          
-    # wasn't argparser supposed to be helpful and do this kind of 
+
+    # wasn't argparser supposed to be helpful and do this kind of
     # shit for us?
     if args.interactive and (args.outwav or args.realtime
                              or args.score_only or args.text_stdin
@@ -138,9 +139,9 @@ def main():
     if args.outwav and (args.score_only or args.realtime):
         raise argparser.error('-o must not be used -s or -r')
     if args.score_only and (args.outwav or args.realtime):
-        raise argparser.error('-s must not be used -o or -r') 
+        raise argparser.error('-s must not be used -o or -r')
     if args.realtime and (args.outwav or args.score_only):
-        raise argparser.error('-r must not be used -o or -s')     
+        raise argparser.error('-r must not be used -o or -s')
     if (args.outwav or args.score_only or args.realtime) \
             and not (args.filename or args.text_stdin):
         raise argparser.error('You need to specify an input: a filename or '\
@@ -148,7 +149,7 @@ def main():
 
     # okay, we've checked all possible CL parsing errors, let's
     # figure out our working parameters:
-    
+
     # stuff relating to picking an orchestra file:
     immediate_orc = './' + args.orc_file
     directory_orc = constants.ORC_DIR + '/' + args.orc_file
@@ -156,15 +157,15 @@ def main():
         chosen_orc = args.orc_file
     elif os.path.exists(immediate_orc):
         chosen_orc = immediate_orc
-    else:    
-        chosen_orc = directory_orc 
-    
+    else:
+        chosen_orc = directory_orc
+
     # show csound parsing messages?
     if args.debug_mode:
         verbosity_string = ''
     else:
         verbosity_string = ' -O null '
-    
+
     if args.interactive or args.realtime:
         rt_mode = True
         csound_command = (constants.RT_CSOUND_COMMAND_STUB
@@ -215,6 +216,6 @@ def main():
             temp_sco_file.write('%s\n%s' % (outbuf[0], outbuf[1]))
             temp_sco_file.close()
             system(csound_command)
-            
+
 if __name__ == '__main__':
     main()

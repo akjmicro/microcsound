@@ -8,7 +8,7 @@ from microcsound.constants import MIDDLE_C_HZ
 
 
 def octaves(pitch):
-    """return a value in log octaves of a pitch expressed as a decimal"""
+    """Return a value in log octaves of a pitch expressed as a decimal."""
     return log(pitch, 2)
 
 
@@ -31,14 +31,14 @@ def solfege2et(text, div):
     :returns: an integer representing a degree in an octave or non-octave
               based tuning system.
     :rtype: `int`
-    
+
     :Example:
-    
+
     >>> solfege2et('^g', 19)
-    >>> 12    
+    >>> 12
     """
     # some helper definitions:
-    octav = int(round(div))    
+    octav = int(round(div))
     tempered_fifth = round(octaves(1.5) * div)
     whole_step = 2 * tempered_fifth % div
     chromatic = (3 * whole_step) - \
@@ -90,12 +90,12 @@ def solfege2et(text, div):
 
 
 def degree2hz(degree, div):
-    """return a pitch in HZ from a numerical index
-    and a division of the octave. Think of the 'degree' as the numerator, and
-    the 'div' as the denominator of a fraction that represents a _logarithmic_
-    (base-2) ratio. The returned value is the vibrations-per-second in HZ
-    for that given pitch.
-    
+    """Return a pitch in Hz from a numeric index & division of the octave.
+
+    Think of the 'degree' as the numerator, and the 'div' as the denominator
+    of a fraction that represents a _logarithmic_ (base-2) ratio.  The
+    returned value is the vibrations-per-second in HZ for that given pitch.
+
     :param degree: The degree of the octave (numerator)
     :type degree: `int` (or `float`, if that's useful)
     :param div: The division of the octave (denominator)

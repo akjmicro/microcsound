@@ -1,5 +1,8 @@
 import unittest
-import mock
+try:
+    import mock
+except:
+    import unittest.mock as mock
 
 try:
     from StringIO import StringIO
@@ -63,7 +66,8 @@ class MicrocsoundTests(unittest.TestCase):
                       'i7.0 0.500 0.250  0.66  334.13815  0.5  1',
                       result_2[1])
 
-    def test_live_looper_two(self):
+    @mock.patch('microcsound.handlers._handle_time_report_helper')
+    def test_live_looper_two(self, mock_handle):
         """Test the live looper function for time reporting."""
         # We use a mock input via a StringIO object instead of 'raw_input',
         # which requires human intervention.
@@ -73,7 +77,9 @@ class MicrocsoundTests(unittest.TestCase):
         microcsound.main.live_input_func = dummy_live_input_func(fp)
         result = live_loop_in()
         result_2 = process_buffer(result, rt_mode=True)
-        assert False
+        assert True
+        import pdb; pdb.set_trace()
+        self.assertTrue(mock_handle.call_args[0][0] == 1.75)
 
     def test_pedal_string(self):
         """Test the use of pedal indications on duration."""

@@ -3,9 +3,10 @@
 from microcsound import constants
 
 class State(object):
-    """storing some state in a safe object interface. These are the
-    variables that would be annoying to have to redefine for every voice
-    line...
+    """Store some state in a safe object interface.
+
+    These are the variables that would be annoying to have to redefine for
+    every voice line...
     """
     def __init__(self):
         self.div = 31
@@ -18,7 +19,7 @@ class State(object):
                             ### instead of an empty starting string
         self.tie_dict = {}
         self.reset_voice()
-    
+
     def reset_voice(self):
         self.length = 1/4.
         self.octave = 5
@@ -37,10 +38,10 @@ class State(object):
         # articulation
         self.staccato_length = .2
         self.non_legato_space = .02
-        # pedalling  
+        # pedalling
         self.pedal_down = False
         self.arrival = 0
-        # other defaults: 
+        # other defaults:
         self.default_attack = .66
         self.pan = 0.5
         self.mix = 1
