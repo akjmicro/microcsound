@@ -7,9 +7,9 @@ from microcsound.state import state_obj
 
 
 def handle_global_variable_event(event):
-    """ A function that doesn't return a value but
-    is purposely designed to have side-effects on the state_obj
-    global variables
+    """Handle global event changes.
+
+    Heavy on side-effects.
     """
     global_variable = event.split('=')
     evtype, val = global_variable[0], global_variable[1]
@@ -42,7 +42,7 @@ def handle_global_variable_event(event):
 
 
 def handle_instrument_parameter(event):
-    """handle an instrument parameter event"""
+    """Handle an instrument parameter event."""
     xtext = event.split('=')
     pslot = int(xtext[0].replace('p', '')) - 8
     try:
@@ -55,19 +55,19 @@ def handle_instrument_parameter(event):
 
 
 def handle_many_instrument_parameters(event):
-    """handle a group parameter event for an instrument"""
+    """Handle a group parameter event for an instrument."""
     state_obj.xtra = event.split('%')
 
 
 def handle_JI_transpose(event):
-    """handle a JI transposition event"""
+    """Handle a JI transposition event."""
     key_ratio_text = event.split('=')[1]
     key_ratio_text_new = key_ratio_text.split(':')
     state_obj.key = float(key_ratio_text_new[0]) / float(key_ratio_text_new[1])
 
 
 def handle_length(event):
-    """handle a change in note length"""
+    """Handle a change in note length."""
     z = re.search(r"(?:\[L:)?([0-9]{1,4})[/]([0-9]{1,4})(?:\])?",
                           event)
     numerator = float(z.group(1))
@@ -76,7 +76,7 @@ def handle_length(event):
 
 
 def handle_rest(event):
-    """handle a rest event"""
+    """Handle a rest event."""
     factor = event[1:]
     if factor != '':
         state_obj.length_factor = int(factor)
@@ -86,7 +86,7 @@ def handle_rest(event):
 
 
 def handle_chord_status(event):
-    """handle a chord status change event"""
+    """Handle a chord status change event."""
     if event == '[':
         state_obj.chord_status = 1
     else:
@@ -95,8 +95,8 @@ def handle_chord_status(event):
 
 
 def handle_pedal(event):
-    """handle a pedalling event"""
-    
+    """Handle a pedalling event."""
+
     if 'PD' in event:
         state_obj.pedal_down = True
         ev = re.match(r'PD(?P<arrival>\d{1,3})', event)
@@ -107,7 +107,7 @@ def handle_pedal(event):
 
 
 def handle_time_travel(event):
-    """handle a time travel event"""
+    """Handle a time travel event."""
     r = re.search(r"[&]([\-+]?)([0-9]*)", event)
     sign = r.group(1)
     value = r.group(2)
@@ -116,13 +116,13 @@ def handle_time_travel(event):
     elif sign and sign == '+':
         state_obj.grid_time += state_obj.length * int(value)
     else:
-        state_obj.grid_time = state_obj.length * int(value)    
+        state_obj.grid_time = state_obj.length * int(value)
 
 
 def handle_time_report(event):
-    """handle a time reporting event"""
+    """Handle a time reporting event."""
     print("grid time is currently %f" % state_obj.grid_time)
-    
+
 
 def handle_attack(event):
     if '.' in event[1:]:
@@ -137,14 +137,14 @@ def handle_attack(event):
 
 
 def handle_symbolic_notation(event):
-    """interpret and return data from a symbolic note event"""
+    """Handle a symbolic note event."""
     mylist = re.search(r"(?P<articul>[.\(]?)"
-                     r"(?P<pitch>(?:\^/2|_/2|[_^=/\\<>!?]|"
-                     r"\xc2\xa1|\xc2\xbf)*"
-                     r"[a-g](?:\*)*[',]*)"
-                     r"(?P<len>[0-9]{0,2})(?P<tie>[-]?)"
-                     r"(?P<legato_end>[)]?)",
-                     event)
+                       r"(?P<pitch>(?:\^/2|_/2|[_^=/\\<>!?]|"
+                       r"\xc2\xa1|\xc2\xbf)*"
+                       r"[a-g](?:\*)*[',]*)"
+                       r"(?P<len>[0-9]{0,2})(?P<tie>[-]?)"
+                       r"(?P<legato_end>[)]?)",
+                       event)
     articul = mylist.group('articul')
     pitch = mylist.group('pitch')
     length_factor = mylist.group('len')
@@ -172,19 +172,18 @@ def handle_symbolic_notation(event):
         tie = 1
     else:
         tie = 0
-
     state_obj.length_factor = length_factor
-    
+
     return pitch, length_factor, articulation, tie
 
 
 def handle_numeric_notation(event):
-    """handle and return data from a numeric notation event"""
+    """Handle and return data from a numeric notation event."""
     mylist = re.search(r"(?P<articul>[.\(]?)"
-             r"(?:(?P<oct>[0-9]+)[.])?"
-             r"(?P<deg>[-]?[0-9]+)"
-             r"(?P<legato_end>[\)]?)"
-             r"(?P<tie>[| t]*)", event)
+                       r"(?:(?P<oct>[0-9]+)[.])?"
+                       r"(?P<deg>[-]?[0-9]+)"
+                       r"(?P<legato_end>[\)]?)"
+                       r"(?P<tie>[| t]*)", event)
     articul = mylist.group('articul')
     try:
         myoct = mylist.group('oct')
@@ -200,7 +199,7 @@ def handle_numeric_notation(event):
         state_obj.articulation = 'staccato'
     elif legato_end:
         state_obj.articulation = 'non-legato'
-    
+
     articulation = state_obj.articulation
 
     if myoct:
@@ -221,18 +220,17 @@ def handle_numeric_notation(event):
 
     # we've already handled the ties ourselves:
     tie = 0
-
     state_obj.length_factor = length_factor
 
     return pitch, length_factor, articulation, tie
 
 
 def handle_JI_notation(event):
-    """handle and return data from a JI note event"""
+    """Handle and return data from a JI note event."""
     mylist = re.search(r"(?P<articul>[.\(]?)"
-                     r"(?P<ratio>[0-9]+[:][0-9]+)"
-                     r"(?P<legato_end>[\)]?)"
-                     r"(?P<tie>[| t]*)", event)
+                       r"(?P<ratio>[0-9]+[:][0-9]+)"
+                       r"(?P<legato_end>[\)]?)"
+                       r"(?P<tie>[| t]*)", event)
     articul = mylist.group('articul')
     try:
         ratio_text = mylist.group('ratio')
@@ -247,7 +245,7 @@ def handle_JI_notation(event):
         state_obj.articulation = 'staccato'
     elif legato_end:
         state_obj.articulation = 'non-legato'
-  
+
     articulation = state_obj.articulation
 
     ratio_text_new = ratio_text.split(':')
@@ -260,7 +258,6 @@ def handle_JI_notation(event):
 
     # we've already handled the tie:
     tie = 0
-
     state_obj.length_factor = length_factor
 
     return pitch, length_factor, articulation, tie
