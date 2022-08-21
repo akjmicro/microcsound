@@ -1,5 +1,5 @@
 CHANGES in version 20170929:
-* complete refactoring of codebase to be divided into several modulules;
+* complete refactoring of codebase to be divided into several modules;
 * distribution as a Python package.
 
 CHANGES in version 20170619:
