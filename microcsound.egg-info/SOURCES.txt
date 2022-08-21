@@ -1,3 +1,4 @@
+LICENSE.txt
 README.rst
 setup.py
 microcsound/__init__.py
