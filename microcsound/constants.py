@@ -3,16 +3,14 @@
 # EDIT DEFAULTS HERE:
 # orchestra dir, where the script can look for your
 # Csound orchestra files:
-ORC_DIR = '/usr/local/share/microcsound'
+ORC_DIR = "/usr/local/share/microcsound"
 # the name, without a full path, of the default Csound orchestra
 # file that microcsound will look for if none is explicitly stated
-DEFAULT_ORC_FILE = 'microcsound_basic.orc'
+DEFAULT_ORC_FILE = "microcsound_basic.orc"
 # the beginning stub of a Csound command for non-realtime use:
-NORMAL_CSOUND_COMMAND_STUB = '/usr/bin/csound -d --messagelevel=0 ' \
-                             '--nodisplays -W'
+NORMAL_CSOUND_COMMAND_STUB = "/usr/bin/csound -d --messagelevel=0 --nodisplays -W"
 # The beginning stub Csound command for realtime use:
-RT_CSOUND_COMMAND_STUB = '/usr/bin/csound '\
-                         '-b2048 -B2048 -odac'
+RT_CSOUND_COMMAND_STUB = "/usr/bin/csound -b2048 -B2048 -odac"
 # END USER EDITING
 
 MIDDLE_C_HZ = 261.6255653

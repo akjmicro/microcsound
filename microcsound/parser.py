@@ -23,31 +23,33 @@ PARSER_PATTERN = re.compile(
     r"|(?:(?:[.\(])?(?:[0-9]+[:][0-9]+)\)?(?:[| t](?![=]))*)"
     r"|(?:(?:[.\(])?(?:[0-9]+[.])?(?:[-]?[0-9]+)\)?(?:[| t](?![=]))*)"
     r"|\["
-    r"|\]")
+    r"|\]"
+)
 
 
 def parser(inst_line):
     """This is the logical heart of the application."""
     # before parsing this voice, set up the starting points:
-    
+
     # reset SOME of the state variables:
     state_obj.reset_voice()
 
     for event in PARSER_PATTERN.findall(inst_line):
         # a non-event?
-        if event == '':
+        if event == "":
             continue
 
         # a variable assignment:
-        elif re.match(r"(?P<type>div|mix|pan|gr|gv|gs|t|i)[=]"
-                      r"(?P<value>(?:[0-9]{1,5}[.]?[0-9]{0,5}|\"<\"))",
-                      event):
+        elif re.match(
+            r"(?P<type>div|mix|pan|gr|gv|gs|t|i)[=]"
+            r"(?P<value>(?:[0-9]{1,5}[.]?[0-9]{0,5}|\"<\"))",
+            event,
+        ):
             handlers.handle_global_variable_event(event)
             continue
 
         # an instrument parameter is set:
-        elif re.match(r"(?:(?:p[89]{1}|p[1-9][0-9])[=](?:[-0-9.<]+))",
-                      event):
+        elif re.match(r"(?:(?:p[89]{1}|p[1-9][0-9])[=](?:[-0-9.<]+))", event):
             handlers.handle_instrument_parameter(event)
             continue
 
@@ -55,9 +57,9 @@ def parser(inst_line):
         elif re.match(r"(?:\"[-0-9.<%]+\")", event):
             handlers.handle_many_instrument_parameters(event)
             continue
-        
+
         # transposition by JI ratio:
-        elif 'key' in event:
+        elif "key" in event:
             handlers.handle_JI_transpose(event)
             continue
 
@@ -67,32 +69,32 @@ def parser(inst_line):
             continue
 
         # rests:
-        elif event[0] == 'r' or event[0] == 'z' or event[0] == 'x':
+        elif event[0] == "r" or event[0] == "z" or event[0] == "x":
             handlers.handle_rest(event)
             continue
 
         # chords are enabled by 'stopping the clock':
-        elif event in '[]':
+        elif event in "[]":
             handlers.handle_chord_status(event)
             continue
 
         # added this for sustain pedal passages:
-        elif event.startswith('PD') or event.startswith('PU'):
+        elif event.startswith("PD") or event.startswith("PU"):
             handlers.handle_pedal(event)
             continue
 
         # grid time pointer can be changed for 'time travel' :-) :
-        elif event[0] == '&':
+        elif event[0] == "&":
             handlers.handle_time_travel(event)
             continue
 
         # report on current time for given voice:
         elif "`" in event:
             handlers.handle_time_report(event)
-            continue 
+            continue
 
         # attack level:
-        elif event[0] == '@':
+        elif event[0] == "@":
             handlers.handle_attack(event)
             continue
 
@@ -102,18 +104,19 @@ def parser(inst_line):
 
         # ratio notation (JI):
         elif re.match(r"(?:[.\(])?(?:[0-9]+[:][0-9]+)", event):
-            pitch, length_factor, articulation, tie = \
-                handlers.handle_JI_notation(event)
+            pitch, length_factor, articulation, tie = handlers.handle_JI_notation(event)
 
         # [oct.]degree notation:
         elif re.match(r"(?:[.\(])?(?:[0-9]+[.])?(?:[-]?[0-9]+)", event):
-            pitch, length_factor, articulation, tie = \
-                handlers.handle_numeric_notation(event)
+            pitch, length_factor, articulation, tie = handlers.handle_numeric_notation(
+                event
+            )
 
         # symbolic diatonic notation:
         else:
-            pitch, length_factor, articulation, tie = \
-                handlers.handle_symbolic_notation(event)
+            pitch, length_factor, articulation, tie = handlers.handle_symbolic_notation(
+                event
+            )
 
         # possibly we have a JI transposition:
         pitch = float(pitch) * float(state_obj.key)
@@ -121,14 +124,13 @@ def parser(inst_line):
         # OK, if we have finally gotten a pitch event, we know what's what
         # now. If we've gotten this far in the loop,
         # we can calculate stuff....
-        on_time = state_obj.grid_time + (gauss(0, 0.001)
-                                         * state_obj.gaussian_rhythm
-                                         * state_obj.tempo * 0.01666)
+        on_time = state_obj.grid_time + (
+            gauss(0, 0.001) * state_obj.gaussian_rhythm * state_obj.tempo * 0.01666
+        )
         if on_time < 0:
             on_time = 0
-        if state_obj.default_attack != '<':
-            attack = state_obj.default_attack + int(
-                gauss(0, state_obj.gaussian_volume))
+        if state_obj.default_attack != "<":
+            attack = state_obj.default_attack + int(gauss(0, state_obj.gaussian_volume))
             if attack >= 1:
                 attack = 1
         else:
@@ -140,12 +142,14 @@ def parser(inst_line):
             # if note is not in the list of tied notes, add it.
             if pitch not in state_obj.tie_dict[state_obj.instr]:
                 state_obj.tie_dict[state_obj.instr][pitch] = [
-                    on_time, state_obj.length_factor, attack, state_obj.pan
-                    ]
+                    on_time,
+                    state_obj.length_factor,
+                    attack,
+                    state_obj.pan,
+                ]
             # if it IS there already, add duration to it.
-            else:                      
-                state_obj.tie_dict[state_obj.instr][pitch][1] += (
-                    state_obj.length_factor)
+            else:
+                state_obj.tie_dict[state_obj.instr][pitch][1] += state_obj.length_factor
             continue
         # or if the note was a tie, and is now not tied, that means
         # it's time actually get its endpoints and send it to the
@@ -160,26 +164,36 @@ def parser(inst_line):
         if state_obj.pedal_down:
             duration = state_obj.arrival - on_time
         else:
-            if state_obj.articulation == 'staccato':
-                duration = (((state_obj.tempo / 60.)
-                            * state_obj.staccato_length)
-                            + (gauss(0, 0.001) * state_obj.gaussian_staccato
-                            * state_obj.tempo * 0.01666))
-            elif state_obj.articulation == 'legato':
+            if state_obj.articulation == "staccato":
+                duration = ((state_obj.tempo / 60.0) * state_obj.staccato_length) + (
+                    gauss(0, 0.001)
+                    * state_obj.gaussian_staccato
+                    * state_obj.tempo
+                    * 0.01666
+                )
+            elif state_obj.articulation == "legato":
                 # negative p3 for legato instruments
                 duration = (state_obj.length * length_factor) * -1
             else:
-                duration = (state_obj.length * length_factor) 
+                duration = state_obj.length * length_factor
 
         # finally, a place to put the output text:
-        state_obj.outstring = (state_obj.outstring
-             + 'i%1.1f %1.3f %1.3f  %s  %s  %s  %s  %s\n'
-                % (state_obj.instr, on_time, duration,
-                   attack, pitch, state_obj.pan, state_obj.mix,
-                   ' '.join(state_obj.xtra).replace('\"', ''))
+        state_obj.outstring = (
+            state_obj.outstring
+            + "i%1.1f %1.3f %1.3f  %s  %s  %s  %s  %s\n"
+            % (
+                state_obj.instr,
+                on_time,
+                duration,
+                attack,
+                pitch,
+                state_obj.pan,
+                state_obj.mix,
+                " ".join(state_obj.xtra).replace('"', ""),
             )
+        )
 
         # update grid_time for next event, but only if not in chord status
         # '[]' mode:
         if not state_obj.chord_status:
-            state_obj.grid_time += (state_obj.length * length_factor)
+            state_obj.grid_time += state_obj.length * length_factor

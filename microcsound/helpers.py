@@ -41,48 +41,47 @@ def solfege2et(text, div):
     octav = int(round(div))
     tempered_fifth = round(octaves(1.5) * div)
     whole_step = 2 * tempered_fifth % div
-    chromatic = (3 * whole_step) - \
-                ((-1 * tempered_fifth) % div)
-    half_chromatic = chromatic * .5
-    syntonic = round(octaves(81/80.0) * div)
-    septimal = round(octaves(64/63.0) * div)
-    undecimal = round(octaves(33/32.0) * div)
-    tridecimal = round(octaves(1053/1024.0) * div)
+    chromatic = (3 * whole_step) - ((-1 * tempered_fifth) % div)
+    half_chromatic = chromatic * 0.5
+    syntonic = round(octaves(81 / 80.0) * div)
+    septimal = round(octaves(64 / 63.0) * div)
+    undecimal = round(octaves(33 / 32.0) * div)
+    tridecimal = round(octaves(1053 / 1024.0) * div)
     # extra:
     pure_fifth = octaves(1.5) * div
     meancomma = pure_fifth - tempered_fifth
 
     # the notes tokens:
-    note_tokens = {'=': 0,
-                   'c': 0,
-                   'd': whole_step,
-                   'e': whole_step * 2,
-                   'f': (-1 * tempered_fifth) % div,
-                   'g': tempered_fifth,
-                   'a': tempered_fifth + whole_step,
-                   'b': tempered_fifth + whole_step * 2,
-                   '^': chromatic,
-                   '_': -1 * chromatic,
-                   '^/2': half_chromatic,
-                   '_/2': -1 * half_chromatic,
-                   '/':  syntonic,
-                   '\\': -1 * syntonic,
-                   '>': septimal,
-                   '<': -1 * septimal,
-                   '!': undecimal,
-                   '¡': -1 * undecimal,
-                   '?': tridecimal,
-                   '¿': -1 * tridecimal,
-                   '*': meancomma,
-                   "'": octav,
-                   ",": -1 * octav
-                  }
+    note_tokens = {
+        "=": 0,
+        "c": 0,
+        "d": whole_step,
+        "e": whole_step * 2,
+        "f": (-1 * tempered_fifth) % div,
+        "g": tempered_fifth,
+        "a": tempered_fifth + whole_step,
+        "b": tempered_fifth + whole_step * 2,
+        "^": chromatic,
+        "_": -1 * chromatic,
+        "^/2": half_chromatic,
+        "_/2": -1 * half_chromatic,
+        "/": syntonic,
+        "\\": -1 * syntonic,
+        ">": septimal,
+        "<": -1 * septimal,
+        "!": undecimal,
+        "¡": -1 * undecimal,
+        "?": tridecimal,
+        "¿": -1 * tridecimal,
+        "*": meancomma,
+        "'": octav,
+        ",": -1 * octav,
+    }
 
     # a place to collect the total:
     value_sum = 0
 
-    for intok in re.findall(r"\^/2|_/2|[a-g',^_=/\\<>!?]|\xc2\xa1|\xc2\xbf|\*",
-                           text):
+    for intok in re.findall(r"\^/2|_/2|[a-g',^_=/\\<>!?]|\xc2\xa1|\xc2\xbf|\*", text):
         value_sum += note_tokens[intok]
 
     # return the result:
