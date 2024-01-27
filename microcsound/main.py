@@ -74,7 +74,6 @@ def process_buffer(inbuffer, rt_mode=False):
 # live_loop_in function here:
 def live_loop_in():
     """Handle interactive input."""
-    pinbuff = "i200 0 -1\n"
     while True:
         phrase = live_input_func("microcsound--> ")
         if phrase.strip() == "done":

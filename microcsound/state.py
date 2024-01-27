@@ -15,7 +15,7 @@ class State(object):
         self.instr = 1
         self.tempo = 120
         self.tempostring = "t 0 120 "  ###
-        self.outstring = "i200 0 -1\n"  ### everything output goes here
+        self.outstring = ""  ### everything output goes here
         ### added starting zak mixer statement on
         ### 2010-08-03
         ### instead of an empty starting string

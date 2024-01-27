@@ -15,7 +15,8 @@ microcsound.egg-info/dependency_links.txt
 microcsound.egg-info/entry_points.txt
 microcsound.egg-info/top_level.txt
 microcsound/share/data/8bit.orc
+microcsound/share/data/blah.sco
 microcsound/share/data/ciconia.mc
-microcsound/share/data/microcsound_basic.orc
+microcsound/share/data/ciconia.sco
 microcsound/share/doc/CHANGES
 microcsound/share/doc/microcsound_tutorial.txt

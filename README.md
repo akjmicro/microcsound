@@ -26,7 +26,7 @@ Once downloaded, in the 'microcsound' directory:
 ___________________________________
 
 * Files will be installed into a Python lib directory on your system. E.G.,
-on a Linux system, something like _/usr/local/lib/Python3.6_
+on a Linux system, something like _/usr/local/lib/Python3.11_
 
 * You may also want to edit the variables at the top of the 'constants.py'
 script itself, especially the first 'orc_dir' variable. Open it with an editor, and change the four variables towards
@@ -39,7 +39,7 @@ the top, in the block that look like this:
 orc_dir = '/home/YOUR_LOGIN_NAME/csound_files/'
 ##### the name, without a full path, of the default Csound orchestra
 ##### file microcsound will look for if none is explicitly stated
-default_orc_file = 'microcsound_basic.orc'
+default_orc_file = '8bit.orc'
 ##### the beginning stub of a Csound command for non-realtime use:
 normal_csound_command_stub = 'csound -d -m0 -W'
 ##### The beginning stub Csound command for realtime use:
@@ -70,9 +70,9 @@ intonation harmony is easily accessible in a convenient intuitive way.
 * implementation of a 'time pointer' notation which allows arbitrary
 number of counterpoint layers in a single 'voice'
 
-See the example 'ciconia.mc' (a rendering of a medieval piece) 
-and the tutorials/docs for an understanding of how to use the syntax 
-for your own compositions.
+See the example 'ciconia.mc' (a rendering of a medieval piece, given in the
+repo path `microcsound/share/data/ciconia.mc`) and the tutorials/docs for an
+understanding of how to use the syntax for your own compositions.
 
 ## To use:
 
@@ -82,7 +82,7 @@ It's best to start by seeing all the command-line options, so first, try:
 ```
 
 After writing a little example in a file you might name 'yourfile.mc', try
-this:  
+this:
 ```
          $ microcsound yourfile.mc
 ```

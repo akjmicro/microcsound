@@ -6,7 +6,7 @@
 ORC_DIR = "/usr/local/share/microcsound"
 # the name, without a full path, of the default Csound orchestra
 # file that microcsound will look for if none is explicitly stated
-DEFAULT_ORC_FILE = "microcsound_basic.orc"
+DEFAULT_ORC_FILE = "8bit.orc"
 # the beginning stub of a Csound command for non-realtime use:
 NORMAL_CSOUND_COMMAND_STUB = "/usr/bin/csound -d --messagelevel=0 --nodisplays -W"
 # The beginning stub Csound command for realtime use:
