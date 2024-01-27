@@ -21,7 +21,7 @@ Either download from the 'dist' directory here, or:
 ```
 Once downloaded, in the 'microcsound' directory:
 ```
-    python setup.py install
+    python -m pip install .
 ```
 ___________________________________
 
