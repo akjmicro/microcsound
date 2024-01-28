@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: microcsound
-Version: 1.2.0
+Version: 1.2.1
 Summary: A tool for writing csound scores that can handle microtonality quite well!
 Home-page: https://github.com/akjmicro/microcsound
 Author: Aaron Krister Johnson
