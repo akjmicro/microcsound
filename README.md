@@ -28,28 +28,7 @@ ___________________________________
 * Files will be installed into a Python lib directory on your system. E.G.,
 on a Linux system, something like _/usr/local/lib/Python3.11_
 
-* You may also want to edit the variables at the top of the 'constants.py'
-script itself, especially the first 'orc_dir' variable. Open it with an editor, and change the four variables towards
-the top, in the block that look like this:
-
-```python
-##### EDIT DEFAULTS HERE:           
-##### orchestra dir, where the script can look for your 
-##### Csound orchestra files:
-orc_dir = '/home/YOUR_LOGIN_NAME/csound_files/'
-##### the name, without a full path, of the default Csound orchestra
-##### file microcsound will look for if none is explicitly stated
-default_orc_file = '8bit.orc'
-##### the beginning stub of a Csound command for non-realtime use:
-normal_csound_command_stub = 'csound -d -m0 -W'
-##### The beginning stub Csound command for realtime use:
-rt_csound_command_stub = 'csound -d -m0 -+rtaudio=alsa -b4096 -B4096 -odac'
-##### END USER EDITING 
-```
-
-Change these variables to ones that make sense on your system.
-Just edit between the single quotes to customize. Make sure the single
-quotes remain intact when you're done!
+* Copy `.microcsound.toml` to your home user directory, edit the values to your preferences
 
 ### ABOUT:
 
