@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from microcsound import constants
+from microcsound import config
 
 
 class State(object):
@@ -31,7 +31,7 @@ class State(object):
         self.chord_status = 0
         self.xtra = [""]
         # pitch related defaults:
-        self.octave = constants.MIDDLE_C_OCTAVE
+        self.octave = config.MIDDLE_C_OCTAVE
         self.degree = 0
         self.key = 1
         # rhythm:

@@ -9,7 +9,7 @@ import re
 import argparse
 import os
 
-from microcsound import constants
+from microcsound import config
 from microcsound.parser import parser, PARSER_PATTERN
 from microcsound.state import state_obj
 
@@ -74,20 +74,21 @@ def process_buffer(inbuffer, rt_mode=False):
 # live_loop_in function here:
 def live_loop_in():
     """Handle interactive input."""
+    buff = ""
     while True:
         phrase = live_input_func("microcsound--> ")
         if phrase.strip() == "done":
-            return pinbuff
+            return buff
         else:
-            pinbuff += phrase + "\n"
-    return pinbuff
+            buff += phrase + "\n"
+    return buff
 
 
 def main():
     """Start the magic, of course!"""
 
     argparser = argparse.ArgumentParser(
-        epilog="This is microcsound v.20190210a",
+        epilog="This is microcsound v.1.2.0",
     )
     argparser.usage = """microcsound [-h] [--orc orc_file] [-v]
     [-i |
@@ -98,7 +99,7 @@ def main():
     argparser.add_argument(
         "--orc",
         dest="orc_file",
-        default=constants.DEFAULT_ORC_FILE,
+        default=config.DEFAULT_ORC_FILE,
         help="specify an orchestra file for csound to use," " if not the default.",
     )
     argparser.add_argument(
@@ -182,7 +183,7 @@ def main():
 
     # stuff relating to picking an orchestra file:
     immediate_orc = "./" + args.orc_file
-    directory_orc = constants.ORC_DIR + "/" + args.orc_file
+    directory_orc = config.ORC_DIR + "/" + args.orc_file
     if os.path.exists(args.orc_file):
         chosen_orc = args.orc_file
     elif os.path.exists(immediate_orc):
@@ -199,7 +200,7 @@ def main():
     if args.interactive or args.realtime:
         rt_mode = True
         csound_command = (
-            constants.RT_CSOUND_COMMAND_STUB
+            config.RT_CSOUND_COMMAND_STUB
             + verbosity_string
             + " %s /tmp/microcsound.sco" % chosen_orc
         )
@@ -210,7 +211,7 @@ def main():
         else:
             out_wav = args.outwav
         csound_command = (
-            constants.NORMAL_CSOUND_COMMAND_STUB
+            config.NORMAL_CSOUND_COMMAND_STUB
             + verbosity_string
             + " -o %s %s /tmp/microcsound.sco" % (out_wav, chosen_orc)
         )

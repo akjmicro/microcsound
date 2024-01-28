@@ -1,19 +1,26 @@
 # -*- coding: utf-8 -*-
 
-# EDIT DEFAULTS HERE:
+# USE THIS FILE AS A TEMPLATE. PLACE IN YOUR HOME DIRECTORY.
+# CHANGE VALUES AS NEEDED.
+
 # orchestra dir, where the script can look for your
 # Csound orchestra files:
 ORC_DIR = "/usr/local/share/microcsound"
+
 # the name, without a full path, of the default Csound orchestra
 # file that microcsound will look for if none is explicitly stated
 DEFAULT_ORC_FILE = "8bit.orc"
-# the beginning stub of a Csound command for non-realtime use:
-NORMAL_CSOUND_COMMAND_STUB = "/usr/bin/csound -d --messagelevel=0 --nodisplays -W"
-# The beginning stub Csound command for realtime use:
-RT_CSOUND_COMMAND_STUB = "/usr/bin/csound -b2048 -B2048 -odac"
-# END USER EDITING
 
+# the beginning stub of a Csound command for non-realtime use:
+NORMAL_CSOUND_COMMAND_STUB = "csound -d --messagelevel=0 --nodisplays -W"
+
+# The beginning stub Csound command for realtime use:
+RT_CSOUND_COMMAND_STUB = "csound -b2048 -B2048 -odac"
+
+# If you want to change where the standard pitch-level is, this is the place
+# ~261 HZ corresponds to 12-edo, A-440 concert pitch
 MIDDLE_C_HZ = 261.6255653
+
 # for changing middle c numerical pitch standard in the notation
 # (MIDI=5, CSound=8, piano=4) MIDI is default:
 MIDDLE_C_OCTAVE = 5

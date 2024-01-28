@@ -2,7 +2,7 @@
 
 import re
 
-from microcsound import constants, helpers
+from microcsound import config, helpers
 from microcsound.state import state_obj
 
 
@@ -226,7 +226,7 @@ def handle_numeric_notation(event):
         degree_raw = int(deg)
         if state_obj.div > 0:
             degree = (
-                state_obj.octave - constants.MIDDLE_C_OCTAVE
+                state_obj.octave - config.MIDDLE_C_OCTAVE
             ) * state_obj.div + degree_raw
             pitch = helpers.degree2hz(degree, state_obj.div)
         else:
@@ -272,7 +272,7 @@ def handle_JI_notation(event):
 
     ratio_text_new = ratio_text.split(":")
     ratio = float(ratio_text_new[0]) / float(ratio_text_new[1])
-    pitch = constants.MIDDLE_C_HZ * ratio
+    pitch = config.MIDDLE_C_HZ * ratio
 
     length_factor = 1
     if tie_phrase:

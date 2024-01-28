@@ -4,7 +4,7 @@
 import re
 from math import log, pow
 
-from microcsound.constants import MIDDLE_C_HZ
+from microcsound.config import MIDDLE_C_HZ
 
 
 def octaves(pitch):

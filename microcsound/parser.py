@@ -4,7 +4,7 @@ import re
 from random import gauss
 
 from microcsound.state import state_obj
-from microcsound import constants, handlers
+from microcsound import config, handlers
 
 PARSER_PATTERN = re.compile(
     r"(?:(?:mix|pan|div|gr|gv|gs|t|i)[=](?:[0-9]{0,5}[.]?[0-9]{1,5}|\"<\"))"
