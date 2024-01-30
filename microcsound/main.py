@@ -1,26 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# version 20170929. For a list of changes, see the CHANGES file.
-
-from readline import *
-from sys import stdin, stdout, argv
-from os import system
-import re
 import argparse
 import os
+import re
+import subprocess
+from readline import *
+from sys import argv, stdin, stdout
 
 from microcsound import config
-from microcsound.parser import parser, PARSER_PATTERN
+from microcsound.parser import PARSER_PATTERN, parser
 from microcsound.state import state_obj
 
 __all__ = ["process_buffer", "live_loop_in", "sanity_tests", "main"]
-
-# cover differences between Python2.7 and Python3 for 'raw input':
-
-try:  # Python2.7
-    live_input_func = raw_input
-except NameError:  # Python3.*
-    live_input_func = input
 
 
 def process_buffer(inbuffer, rt_mode=False):
@@ -76,7 +67,11 @@ def live_loop_in():
     """Handle interactive input."""
     buff = ""
     while True:
-        phrase = live_input_func("microcsound--> ")
+        try:
+            phrase = input("microcsound--> ")
+        except EOFError:
+            print("bye!")
+            exit(0)
         if phrase.strip() == "done":
             return buff
         else:
@@ -88,7 +83,7 @@ def main():
     """Start the magic, of course!"""
 
     argparser = argparse.ArgumentParser(
-        epilog="This is microcsound v.1.2.1",
+        epilog="This is microcsound v.1.2.2",
     )
     argparser.usage = """microcsound [-h] [--orc orc_file] [-v]
     [-i |
@@ -226,7 +221,12 @@ def main():
                 temp_sco_file = open("/tmp/microcsound.sco", "w")
                 temp_sco_file.write("%s\n%s" % (outbuf[0], outbuf[1]))
                 temp_sco_file.close()
-                system(csound_command)
+                subprocess.call(
+                    csound_command,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    shell=True
+                )
         except KeyboardInterrupt:
             print("bye!")
             exit()
@@ -245,7 +245,12 @@ def main():
             temp_sco_file = open("/tmp/microcsound.sco", "w")
             temp_sco_file.write("%s\n%s" % (outbuf[0], outbuf[1]))
             temp_sco_file.close()
-            system(csound_command)
+            subprocess.call(
+                csound_command,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                shell=True
+            )
 
 
 if __name__ == "__main__":
