@@ -104,22 +104,18 @@ def parser(inst_line):
 
         # ratio notation (JI):
         elif re.match(r"(?:[.\(])?(?:[0-9]+[:][0-9]+)", event):
-            pitch, length_factor, articulation, tie = handlers.handle_JI_notation(event)
+            handlers.handle_JI_notation(event)
 
         # [oct.]degree notation:
         elif re.match(r"(?:[.\(])?(?:[0-9]+[.])?(?:[-]?[0-9]+)", event):
-            pitch, length_factor, articulation, tie = handlers.handle_numeric_notation(
-                event
-            )
+            handlers.handle_numeric_notation(event)
 
         # symbolic diatonic notation:
         else:
-            pitch, length_factor, articulation, tie = handlers.handle_symbolic_notation(
-                event
-            )
+            handlers.handle_symbolic_notation(event)
 
         # possibly we have a JI transposition:
-        pitch = float(pitch) * float(state_obj.key)
+        pitch = float(state_obj.pitch) * float(state_obj.key)
 
         # OK, if we have finally gotten a pitch event, we know what's what
         # now. If we've gotten this far in the loop,
@@ -157,7 +153,7 @@ def parser(inst_line):
         if pitch in state_obj.tie_dict[state_obj.instr]:
             tie_info = state_obj.tie_dict[state_obj.instr].pop(pitch)
             on_time = info[0]
-            length_factor = tie_info[1] + state_obj.length_factor
+            state_obj.length_factor = tie_info[1] + state_obj.length_factor
             attack = tie_info[2]
             state_obj.pan = tie_info[3]
         # calculate duration:
@@ -173,9 +169,9 @@ def parser(inst_line):
                 )
             elif state_obj.articulation == "legato":
                 # negative p3 for legato instruments
-                duration = (state_obj.length * length_factor) * -1
+                duration = (state_obj.length * state_obj.length_factor) * -1
             else:
-                duration = state_obj.length * length_factor
+                duration = state_obj.length * state_obj.length_factor
 
         # finally, a place to put the output text:
         state_obj.outstring = (
@@ -196,4 +192,4 @@ def parser(inst_line):
         # update grid_time for next event, but only if not in chord status
         # '[]' mode:
         if not state_obj.chord_status:
-            state_obj.grid_time += state_obj.length * length_factor
+            state_obj.grid_time += state_obj.length * state_obj.length_factor

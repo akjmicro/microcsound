@@ -177,19 +177,16 @@ def handle_symbolic_notation(event):
 
     if pitch:
         degree = helpers.solfege2et(pitch, state_obj.div)
-        pitch = helpers.degree2hz(degree, state_obj.div)
+        state_obj.pitch = helpers.degree2hz(degree, state_obj.div)
     if length_factor:
-        length_factor = int(length_factor)
+        state_obj.length_factor = int(length_factor)
     else:
-        length_factor = 1
+        state_obj.length_factor = 1
 
     if tie_dash:
-        tie = 1
+        state_obj.tie = 1
     else:
-        tie = 0
-    state_obj.length_factor = length_factor
-
-    return pitch, length_factor, articulation, tie
+        state_obj.tie = 0
 
 
 def handle_numeric_notation(event):
@@ -218,8 +215,6 @@ def handle_numeric_notation(event):
     elif legato_end:
         state_obj.articulation = "non-legato"
 
-    articulation = state_obj.articulation
-
     if myoct:
         state_obj.octave = int(myoct)
     if deg:
@@ -228,20 +223,18 @@ def handle_numeric_notation(event):
             degree = (
                 state_obj.octave - config.MIDDLE_C_OCTAVE
             ) * state_obj.div + degree_raw
-            pitch = helpers.degree2hz(degree, state_obj.div)
+            state_obj.pitch = helpers.degree2hz(degree, state_obj.div)
         else:
             # when div=0, pitch is uninterpreted
-            pitch = degree_raw
+            state_obj.pitch = degree_raw
 
     length_factor = 1
     if tie_phrase:
         length_factor += tie_phrase.count("t")
 
     # we've already handled the ties ourselves:
-    tie = 0
+    state_obj.tie = 0
     state_obj.length_factor = length_factor
-
-    return pitch, length_factor, articulation, tie
 
 
 def handle_JI_notation(event):
@@ -268,18 +261,14 @@ def handle_JI_notation(event):
     elif legato_end:
         state_obj.articulation = "non-legato"
 
-    articulation = state_obj.articulation
-
     ratio_text_new = ratio_text.split(":")
     ratio = float(ratio_text_new[0]) / float(ratio_text_new[1])
-    pitch = config.MIDDLE_C_HZ * ratio
+    state_obj.pitch = config.MIDDLE_C_HZ * ratio
 
     length_factor = 1
     if tie_phrase:
         length_factor += tie_phrase.count("t")
 
     # we've already handled the tie:
-    tie = 0
+    state_obj.tie = 0
     state_obj.length_factor = length_factor
-
-    return pitch, length_factor, articulation, tie

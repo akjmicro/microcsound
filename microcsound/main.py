@@ -11,7 +11,11 @@ from microcsound import config
 from microcsound.parser import PARSER_PATTERN, parser
 from microcsound.state import state_obj
 
-__all__ = ["process_buffer", "live_loop_in", "sanity_tests", "main"]
+__all__ = ["process_buffer", "live_input_func", "live_loop_in", "sanity_tests", "main"]
+
+
+# used for mocking
+live_input_func = input
 
 
 def process_buffer(inbuffer, rt_mode=False):
@@ -68,7 +72,7 @@ def live_loop_in():
     buff = ""
     while True:
         try:
-            phrase = input("microcsound--> ")
+            phrase = live_input_func("microcsound--> ")
         except EOFError:
             print("bye!")
             exit(0)
@@ -218,23 +222,21 @@ def main():
                 state_obj.__init__()
                 live_input = live_loop_in()
                 outbuf = process_buffer(live_input, rt_mode=True)
-                temp_sco_file = open("/tmp/microcsound.sco", "w")
-                temp_sco_file.write("%s\n%s" % (outbuf[0], outbuf[1]))
-                temp_sco_file.close()
+                with open("/tmp/microcsound.sco", "w") as temp_sco_file:
+                    temp_sco_file.write("%s\n%s" % (outbuf[0], outbuf[1]))
                 subprocess.call(
                     csound_command,
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
-                    shell=True
+                    shell=True,
                 )
         except KeyboardInterrupt:
             print("bye!")
             exit()
     else:
         if args.filename:
-            the_file = open(args.filename)
-            outbuf = process_buffer(the_file.read(), rt_mode=rt_mode)
-            the_file.close()
+            with open(args.filename) as input_file:
+                outbuf = process_buffer(input_file.read(), rt_mode=rt_mode)
         elif args.text_stdin:
             outbuf = process_buffer(stdin.read(), rt_mode=rt_mode)
 
@@ -242,14 +244,13 @@ def main():
         if args.score_only:
             stdout.write("%s\n%s" % (outbuf[0], outbuf[1]))
         else:
-            temp_sco_file = open("/tmp/microcsound.sco", "w")
-            temp_sco_file.write("%s\n%s" % (outbuf[0], outbuf[1]))
-            temp_sco_file.close()
+            with open("/tmp/microcsound.sco", "w") as temp_sco_file:
+                temp_sco_file.write("%s\n%s" % (outbuf[0], outbuf[1]))
             subprocess.call(
                 csound_command,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                shell=True
+                shell=True,
             )
 
 

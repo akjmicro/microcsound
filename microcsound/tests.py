@@ -153,9 +153,8 @@ def test_solfege2et_octave_down():
 def test_solfege2et_f_to_g_same_c_to_d():
     """Tests that step relationships work."""
     for div in range(5, 53):
-        assert (
-            (solfege2et("g", div) - solfege2et("f", div))
-            == (solfege2et("d", div) - solfege2et("c", div))
+        assert (solfege2et("g", div) - solfege2et("f", div)) == (
+            solfege2et("d", div) - solfege2et("c", div)
         )
 
 
