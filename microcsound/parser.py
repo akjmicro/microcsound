@@ -152,7 +152,7 @@ def parser(inst_line):
         # output list:
         if pitch in state_obj.tie_dict[state_obj.instr]:
             tie_info = state_obj.tie_dict[state_obj.instr].pop(pitch)
-            on_time = info[0]
+            on_time = tie_info[0]
             state_obj.length_factor = tie_info[1] + state_obj.length_factor
             attack = tie_info[2]
             state_obj.pan = tie_info[3]

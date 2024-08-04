@@ -87,7 +87,7 @@ def main():
     """Start the magic, of course!"""
 
     argparser = argparse.ArgumentParser(
-        epilog="This is microcsound v.1.3.0",
+        epilog="This is microcsound v.1.3.1",
     )
     argparser.usage = """microcsound [-h] [--orc orc_file] [-v]
     [-i |
