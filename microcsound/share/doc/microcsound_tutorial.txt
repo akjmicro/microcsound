@@ -19,7 +19,8 @@ setup parameter for a given variable.
 'i=3' means 'use the 3rd instrument in the Csound orchestra file'
 
 'div=53' means 'set it up so that all symbols are interpreted within the
-framework of 53-equal division pitches per octave'
+framework of 53-equal division pitches per octave'. (N.B. as of version 1.4.0,
+there is a new alias for 'div': 'edo', so 'edo=53' will now also work)
 
 't=120' means 'set tempo to 120 beats per quarter note'
 

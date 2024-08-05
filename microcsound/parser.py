@@ -7,7 +7,7 @@ from microcsound import config, handlers
 from microcsound.state import state_obj
 
 PARSER_PATTERN = re.compile(
-    r"(?:(?:mix|pan|div|gr|gv|gs|t|i)[=](?:[0-9]{0,5}[.]?[0-9]{1,5}|\"<\"))"
+    r"(?:(?:mix|pan|div|edo|gr|gv|gs|nls|t|i)[=](?:[0-9]{0,5}[.]?[0-9]{1,5}|\"<\"))"
     r"|(?:(?:p[89]{1}|p[1-9][0-9])[=](?:[-0-9.<]+))"
     r"|(?:key[=][0-9]+[:][0-9]+)"
     r"|(?:\"[-0-9.<%]+\")"
@@ -41,7 +41,7 @@ def parser(inst_line):
 
         # a variable assignment:
         elif re.match(
-            r"(?P<type>div|mix|pan|gr|gv|gs|t|i)[=]"
+            r"(?P<type>div|edo|mix|pan|gr|gv|gs|nls|t|i)[=]"
             r"(?P<value>(?:[0-9]{1,5}[.]?[0-9]{0,5}|\"<\"))",
             event,
         ):

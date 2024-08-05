@@ -23,7 +23,7 @@ def handle_global_variable_event(event):
                 state_obj.grid_time,
                 val,
             )
-    elif evtype == "div":
+    elif evtype == "div" or evtype == "edo":
         state_obj.div = float(val)
     elif evtype == "i":
         state_obj.instr = float(val)
@@ -38,6 +38,8 @@ def handle_global_variable_event(event):
         state_obj.gaussian_volume = float(val)
     elif evtype == "gs":
         state_obj.gaussian_staccato = float(val)
+    elif evtype == "nls":
+        state_obj.non_legato_space = float(val)
     else:
         if val == "<":
             val = "<"
