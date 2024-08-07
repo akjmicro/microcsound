@@ -7,8 +7,9 @@ FILE WITH MICROCSOUND IN ITS ENTIRETY, YOU WILL GET ERRORS!!!
 
 a microcsound example: a scale, covering 3 octaves:
 
-1: i=3 div=53 t=120 gr=5 gv=10 mix=1.0
-1: c,d,e,f,g,a,b,cdefgabc'd'e'f'g'a'b'c'' ||
+# From scale.mc example
+1: i=1 div=53 t=120 mix=0.75 "3%0.01%0.01%1%0.02"
+1: 1/4 @0.89 c,d,e,f,g,a,b,cdefgabc'd'e'f'g'a'b'c'' ||
 
 Here above we see the basic syntax.
 
@@ -48,7 +49,8 @@ file and Csound documentation on ZAK for more details....
 
 Here's a scale with ties, and accidentals:
 
-1: i=2 div=19 t=100  1/4 c,2-c,d, | _e,^f,g,_a, | 
+1: i=1 div=19 t=100 mix=0.75 "3%0.01%0.01%1%0.02"
+1: 1/4 c,2-c,d, | _e,^f,g,_a, |
 1: 1/8 b,a,- a,b,- b,g,=a,b, | 1/4 c4 ||
 
 Above we see a couple of new symbols:
@@ -88,6 +90,7 @@ Here's an example. Let's say I have an 'instr 5' in my orchestra file. And
 let's say I have four extra user parameters to use, p8-p11. The following
 string will set up the parameters before the first note is sounded:
 
+# hypothetical, will likely not work with supplied orchestras!
 1: i=5 "0.01%0.2%0.5%0.4"
 
 All the values are separated by '%' without whitespace, and surrounded by
@@ -98,6 +101,7 @@ the above 4 values represent an envelope of attack, decay, sustain, and
 release on a synth instrument. I can make the attack longer after a couple
 of notes like so:
 
+# as above, hypothetical
 1: i=5 "0.01%0.2%0.5%0.4" c d p8=0.04 e f g r |
 
 The instrument parameter slots above are p8, p9, p10, and p11. Since "p8" is
@@ -108,8 +112,11 @@ the first slot, we are changing its value from "0.01" to "0.04".
  
 Here's "mary had a little lamb", with polyphony illustrated:
 
-1: div=31 t=96 i=1 1/4  (e   d  c    d)  |     .e .e e2 |
-2: div=31          1/8 c,3 .c, g,,2 g,,2 | 1/4 c, g, 1/8 c,b,,c,2 |    
+1: i=1 div=31 pan=0.7 mix=0.75 "2%0.01%0.01%1%0.02"
+1: i=1 div=31 pan=0.3 mix=0.75 "2%0.01%0.01%1%0.02"
+#
+1: t=96 1/4  (e   d  c    d)  |     .e .e e2 |
+2:      1/8 c,3 .c, g,,2 g,,2 | 1/4 c, g, 1/8 c,b,,c,2 |
 #
 1: 1/4  d  d   d2         |    e g      g2  |
 2: 1/8 g,2 zg, g,,2a,,b,, |1/4 c,g, 1/8 c,b,,a,,g,,|
@@ -192,8 +199,11 @@ just intonation from within the structure of 31-equal.
 #####################################################
 
 # "Mary had a little lamb":
-1: div=31 t=96 i=1 1/8 5.10 t 5 t   0 t   5 r | 10 t  10 t 10  t t r |
-2: div=31               4.0 r r 0 -13 t -13 t |  0 t -13 t  0 -3 0 5 |
+1: i=1 div=31 pan=0.7 mix=0.75 "2%0.01%0.01%1%0.02"
+1: i=1 div=31 pan=0.3 mix=0.75 "2%0.01%0.01%1%0.02"
+#
+1: t=96 1/8 5.10 t 5 t   0 t   5 r | 10 t  10 t 10  t t r |
+2:           4.0 r r 0 -13 t -13 t |  0 t -13 t  0 -3 0 5 |
 # 3rd measure
 1:  5 t 5   t  5  t  t t | 10 t .18 r   18  t    t   t |
 2: 18 z z -13 18 13 10 5 |  0 t   r 0 .-13 -8 .-13 .-3 |
@@ -256,16 +266,18 @@ Everything is relative to middle_C = 261 HZ, and one indicates a pitch in
 rational form with colons, since the normal '/' is already taken by rhythmic
 length default indicators. So, for example:
 
-1: t=60 i=3 1:1 2:1 4:1 1:1 1:2 1:4
+# need this instrument setup line in the below examples, too
+1: i=1 div=65536 pan=0.7 mix=0.75 "2%0.01%0.01%1%0.02"
+1: t=60 1:1 2:1 4:1 1:1 1:2 1:4
 
 this above example would be a series of 'c' octaves....to make them 'd'
 octaves, we could do:
 
-1: t=60 i=3 key=9:8 1:1 2:1 4:1 1:1 1:2 1:4
+1: t=60 key=9:8 1:1 2:1 4:1 1:1 1:2 1:4
 
 or
 
-1: t=60 i=3 key=1:1 9:8 18:8 36:8 9:8 9:16 9:32
+1: t=60 key=1:1 9:8 18:8 36:8 9:8 9:16 9:32
 
 which are exact sonic equivalents, but the use of 'key=' makes
 conceptualizing modulation much easier to handle.  So now things are
@@ -296,9 +308,9 @@ a similar structure, but using an subharmonic (utonal) sequence.
 
 Another feature to note: panning and attack volume:
 
-1: div=31 pan=0.3 0 pan=0.9 5 pan=0.3 10 pan=0.9 13 pan=0.5 18 t 
-
-1: div=31 @5 0 @55 5 @6 10 @7 13 @85 18 t 
+1: i=1 div=31 mix=0.75 "2%0.01%0.01%1%0.02"
+1: pan=0.3 0 pan=0.9 5 pan=0.3 10 pan=0.9 13 pan=0.5 18 t
+1: @5 0 @55 5 @6 10 @7 13 @85 18 t
 
 I'm using numbers for notes, but letters work equally well, i.e. attack and
 pan are available for either style; just make sure to surround the 'pan=nnn'
@@ -317,6 +329,7 @@ Since ramping is supported, one can use that in attacks to create
 crescendos (or decrescendos), as long as the ramp has a start and 
 ending value:
 
+1: i=1 mix=0.75 "2%0.01%0.01%1%0.02"
 1: div=19 @7 0 @< 3 6 8 11 14 17 @9 19 t t t r r r
 
 In this example above, we start at volume 0.2, initiate a ramp symbol
@@ -350,7 +363,8 @@ So, if you have a Csound instrument with extra parameters beyond note, volume,
 and spatial panning, (i.e. you want to access p8 and above) you can access 
 them within quotes, separated the individual p-fields by '%' characters:
 
-1: div=19 i=6 ".01%.01%3%.3" 0 3 ".8%.02%3%.5" 6 t t t r r r
+# hypothetical example, might not work with supplied orchestra
+1: div=19 i=6 "0.01%0.01%3%0.3" 0 3 "0.8%0.02%3%0.5" 6 t t t r r r
 
 Here we have an instrument (number 6 because i=6) which has 4 extra 
 p-fields; in this case, p8 is attack time, p9 is release time, p10 is 
@@ -382,6 +396,7 @@ your instrument ignore p4 in that case..
 So for example, we might use a drum instrument, like the one supplied, 
 which allows bass-drum/snare/symbal patterns from one line:
 
+# ditto -- hypothetical example
 1: div=0 t=120 i=120 0 1 0 1 | 0 1 0 1 &-8 1/8 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 
 Well, that should cover it....

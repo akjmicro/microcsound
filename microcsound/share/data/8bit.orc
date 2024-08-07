@@ -37,7 +37,7 @@ endop
 instr 1   ;-- basic waveforms for 8-bit music --;
     idur        =               p3
     ipch        =               p5
-    ;;; putting this first b/c it affect the iamp factor:
+    ;;; putting this first b/c it affects the iamp factor:
     iwav        =               p8
     if (iwav == 1) then
        icorrection  =           1
