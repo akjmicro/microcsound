@@ -171,7 +171,7 @@ def parser(inst_line):
                 # negative p3 for legato instruments
                 duration = (state_obj.length * state_obj.length_factor) * -1
             else:
-                duration = state_obj.length * state_obj.length_factor
+                duration = (state_obj.length * state_obj.length_factor) - state_obj.non_legato_space
 
         # finally, a place to put the output text:
         state_obj.outstring = (

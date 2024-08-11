@@ -1,11 +1,17 @@
 ############################################################################
 ### Johannes Ciconia "Et in Terra Pax" as a chiptune, w/Drum arrangement ###
 ############################################################################
+### Main mixer setup - for this piece, no reverb
+### The `&-1` rewinds the time, allowing instrument 201 and 202 to be
+### triggered at the same time. Whatespace isn't significant, but serves
+### To highlight the two mixer setup statments
+1: div=0 i=201 1    &-1    i=202 "1.0%0.0%0.0%0.0" 1  &-1
+### Instrument setup
 1: i=1.1 "3%0.01%0%1%0.2" pan=0.9 mix=1.2 div=53 gs=10.6 r3 @7
 2: i=1.2 "4%0.01%0%1%0.2" pan=0.1 mix=1.5 div=53 gs=10.6 r3 @74
 3: i=1.3 "2%0.01%0%1%0.2" pan=0.5 mix=1.4 div=53 gs=10.6 r3 @76
-4: i=10 mix=0.25 pan=0.5 div=0 r3
-5: i=10 mix=0.3 pan=0.5 div=0 r3
+4: i=100 mix=0.25 pan=0.5 div=0 r3
+5: i=100 mix=0.3 pan=0.5 div=0 r3
 ### The pre-chant:
 1: t=140 1/5 g e g (g a b c' a g a g2) e2 f2 g4 r r r t=120
 2: 23/5 r

@@ -8,6 +8,7 @@ FILE WITH MICROCSOUND IN ITS ENTIRETY, YOU WILL GET ERRORS!!!
 a microcsound example: a scale, covering 3 octaves:
 
 # From scale.mc example
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: i=1 div=53 t=120 mix=0.75 "3%0.01%0.01%1%0.02"
 1: 1/4 @0.89 c,d,e,f,g,a,b,cdefgabc'd'e'f'g'a'b'c'' ||
 
@@ -49,6 +50,7 @@ file and Csound documentation on ZAK for more details....
 
 Here's a scale with ties, and accidentals:
 
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: i=1 div=19 t=100 mix=0.75 "3%0.01%0.01%1%0.02"
 1: 1/4 c,2-c,d, | _e,^f,g,_a, |
 1: 1/8 b,a,- a,b,- b,g,=a,b, | 1/4 c4 ||
@@ -102,6 +104,7 @@ release on a synth instrument. I can make the attack longer after a couple
 of notes like so:
 
 # as above, hypothetical
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: i=5 "0.01%0.2%0.5%0.4" c d p8=0.04 e f g r |
 
 The instrument parameter slots above are p8, p9, p10, and p11. Since "p8" is
@@ -112,6 +115,8 @@ the first slot, we are changing its value from "0.01" to "0.04".
  
 Here's "mary had a little lamb", with polyphony illustrated:
 
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
+#
 1: i=1 div=31 pan=0.7 mix=0.75 "2%0.01%0.01%1%0.02"
 1: i=1 div=31 pan=0.3 mix=0.75 "2%0.01%0.01%1%0.02"
 #
@@ -198,6 +203,8 @@ just intonation from within the structure of 31-equal.
 ## NOW, AN ENTIRELY DIFFERENT WAY OF DOING THINGS: ##
 #####################################################
 
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
+#
 # "Mary had a little lamb":
 1: i=1 div=31 pan=0.7 mix=0.75 "2%0.01%0.01%1%0.02"
 1: i=1 div=31 pan=0.3 mix=0.75 "2%0.01%0.01%1%0.02"
@@ -267,6 +274,7 @@ rational form with colons, since the normal '/' is already taken by rhythmic
 length default indicators. So, for example:
 
 # need this instrument setup line in the below examples, too
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: i=1 div=65536 pan=0.7 mix=0.75 "2%0.01%0.01%1%0.02"
 1: t=60 1:1 2:1 4:1 1:1 1:2 1:4
 
@@ -308,6 +316,7 @@ a similar structure, but using an subharmonic (utonal) sequence.
 
 Another feature to note: panning and attack volume:
 
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: i=1 div=31 mix=0.75 "2%0.01%0.01%1%0.02"
 1: pan=0.3 0 pan=0.9 5 pan=0.3 10 pan=0.9 13 pan=0.5 18 t
 1: @5 0 @55 5 @6 10 @7 13 @85 18 t
@@ -329,6 +338,7 @@ Since ramping is supported, one can use that in attacks to create
 crescendos (or decrescendos), as long as the ramp has a start and 
 ending value:
 
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: i=1 mix=0.75 "2%0.01%0.01%1%0.02"
 1: div=19 @7 0 @< 3 6 8 11 14 17 @9 19 t t t r r r
 
@@ -364,6 +374,7 @@ and spatial panning, (i.e. you want to access p8 and above) you can access
 them within quotes, separated the individual p-fields by '%' characters:
 
 # hypothetical example, might not work with supplied orchestra
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: div=19 i=6 "0.01%0.01%3%0.3" 0 3 "0.8%0.02%3%0.5" 6 t t t r r r
 
 Here we have an instrument (number 6 because i=6) which has 4 extra 
@@ -397,6 +408,7 @@ So for example, we might use a drum instrument, like the one supplied,
 which allows bass-drum/snare/symbal patterns from one line:
 
 # ditto -- hypothetical example
+1: i=201 1    &-1    i=202 "1%0.5%0.6%4300" 1    &-1
 1: div=0 t=120 i=120 0 1 0 1 | 0 1 0 1 &-8 1/8 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 
 Well, that should cover it....

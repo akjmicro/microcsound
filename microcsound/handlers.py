@@ -174,6 +174,8 @@ def handle_symbolic_notation(event):
         state_obj.articulation = "staccato"
     elif legato_end:
         state_obj.articulation = "non-legato"
+    else:
+        state_obj.articulation = "non-legato"
 
     articulation = state_obj.articulation
 
