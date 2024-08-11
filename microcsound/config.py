@@ -1,17 +1,25 @@
 import tomllib
+import sys
 from pathlib import Path
+
 
 try:
     with open(Path.home() / ".microcsound.toml", "rb") as config_file:
         user_config = tomllib.load(config_file)
 except:
     user_config = {}
-    print("Warning: no '.microcsound.toml' config file found in your home directory!")
-    print("Falling back on default values.")
     print(
-        "To fix these, add that file from the repo to your home directory as a template, "
+        """Warning: no '.microcsound.toml' config file found in your home directory!
+Falling back on default values.
+To fix this, add that file from the repo to your home directory as a template,
+and edit the values to your liking. Then re-run microcsound.
+""",
+        file=sys.stderr,
     )
-    print("and edit the values to your liking. Then re-run microcsound.")
+
+
+with open(Path(__file__).parent.parent / "pyproject.toml", "rb") as pyproject:
+    project_data = tomllib.load(pyproject)
 
 
 ORC_DIR = user_config.get("ORC_DIR", "/usr/local/share/microcsound")

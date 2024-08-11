@@ -86,8 +86,9 @@ def live_loop_in():
 def main():
     """Start the magic, of course!"""
 
+    pyproject_version = config.project_data["project"]["version"]
     argparser = argparse.ArgumentParser(
-        epilog="This is microcsound v.1.4.1",
+        epilog=f"This is microcsound version {pyproject_version}",
     )
     argparser.usage = """microcsound [-h] [--orc orc_file] [-v]
     [-i |
