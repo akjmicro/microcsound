@@ -284,6 +284,8 @@ instr 5    ;;; Plucked, clav-like instrument, using `faust_wguide`.
     aflt            butlp           asig * kenv, ksweep
     aflt            butlp           aflt, ksweep
     aoutL, aoutR    pan2            aflt, ipan
+    aoutL           dcblock2        aoutL
+    aoutR           dcblock2        aoutR
     gabusL          +=              aoutL * imix
     gabusR          +=              aoutR * imix
 endin
