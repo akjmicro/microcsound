@@ -52,9 +52,11 @@ def test_live_looper_one():
         result = live_loop_in()
         result_2 = process_buffer(result, rt_mode=True)
     expected = (
-        "i7.0 0.000 0.250  0.66  261.62557  0.5  1  \n"
-        "i7.0 0.250 0.250  0.66  295.66718  0.5  1  \n"
-        "i7.0 0.500 0.250  0.66  334.13815  0.5  1"
+        "i7.0 0.000 0.230  0.66  261.62557  0.5  1  \n"
+        "i7.0 0.250 0.230  0.66  295.66718  0.5  1  \n"
+        "i7.0 0.500 0.230  0.66  334.13815  0.5  1  \n"
+        "i7.0 0.750 0.230  0.66  348.04364  0.5  1  \n"
+        "i7.0 1.000 0.230  0.66  786.65923  0.5  1  \n"
     )
     assert expected in result_2[1]
 
@@ -92,18 +94,18 @@ def test_pedal_string():
 
 def test_chord_handling():
     """Test how chords are handled."""
-    test_string = "1: div=0\n1: i=1 1/1 [0 1] 2 [3 4] 5\ndone\n"
+    test_string = "1: div=0\n1: i=1 1/1 @-3 [0 1] @-6.5 2 @-3 [3 4] 5\ndone\n"
     fp = StringIO(test_string)
     with mock.patch("microcsound.main.live_input_func", dummy_live_input_func(fp)):
         result = live_loop_in()
         result_2 = process_buffer(result, rt_mode=True)
     expected = (
-        "i1.0 0.000 4.000  0.66  0.0  0.5  1  \n"
-        "i1.0 0.000 4.000  0.66  1.0  0.5  1  \n"
-        "i1.0 4.000 4.000  0.66  2.0  0.5  1  \n"
-        "i1.0 8.000 4.000  0.66  3.0  0.5  1  \n"
-        "i1.0 8.000 4.000  0.66  4.0  0.5  1  \n"
-        "i1.0 12.000 4.000  0.66  5.0  0.5  1"
+        "i1.0 0.000 3.980  -3.0  0.0  0.5  1  \n"
+        "i1.0 0.000 3.980  -3.0  1.0  0.5  1  \n"
+        "i1.0 4.000 3.980  -6.5  2.0  0.5  1  \n"
+        "i1.0 8.000 3.980  -3.0  3.0  0.5  1  \n"
+        "i1.0 8.000 3.980  -3.0  4.0  0.5  1  \n"
+        "i1.0 12.000 3.980  -3.0  5.0  0.5  1  \n"
     )
     assert expected in result_2[1]
 
