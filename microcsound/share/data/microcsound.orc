@@ -306,11 +306,12 @@ instr 100    ;;;--kick--;;;
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
     imix            =               ampdbfs(p7)
-    istartpitch     =               120
-    iendpitch       =               70
-    iampscale       =               1.1
-    k1              expon           istartpitch,  idur + 0.1,  iendpitch
-    aenv            expon           iamp,         idur + 0.1,  0.001
+    istartpitch     =               100
+    iendpitch       =               47
+    iampscale       =               2.1
+    idecay          =               0.2
+    k1              expon           istartpitch,  idecay,  iendpitch
+    aenv            expon           iamp,         idecay,  0.001
     a1              poscil          aenv,         k1,          2
     gabusL          +=              a1 * ipanl * imix * iampscale
     gabusR          +=              a1 * ipanr * imix * iampscale
@@ -323,7 +324,7 @@ instr 101    ;;;--snare--;;;
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
     imix            =               ampdbfs(p7)
-    iampscale       =               0.5
+    iampscale       =               0.8
     idecay          =               0.1
     islope          =               0.1
     aenv            expon           iamp, idecay, iamp * islope
@@ -340,6 +341,7 @@ instr 102    ;;;--hihat closed--;;;
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
     imix            =               ampdbfs(p7)
+    iampscale       =               1.3
     idecay          =               0.06
     islope          =               0.06
     aamp            expon           iamp, idecay, iamp*islope
@@ -355,7 +357,7 @@ instr 103    ;;;--hihat open--;;;
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1 - p6)
     imix            =               ampdbfs(p7)
-    iampscale       =               0.6   ;; used to be 0.5
+    iampscale       =               0.9   ;; used to be 0.5
     islope          =               0.2
     idecay          =               0.2
     aamp            expon           iamp, idecay, iamp * islope
