@@ -167,6 +167,10 @@ def parser(inst_line):
                     * state_obj.tempo
                     * 0.01666
                 )
+                #######################################################################
+                # reset to non-legato since staccato has to be declared for each note #
+                #######################################################################
+                state_obj.articulation = "non-legato"
             elif state_obj.articulation == "legato":
                 # negative p3 for legato instruments
                 duration = (state_obj.length * state_obj.length_factor) * -1

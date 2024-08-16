@@ -46,17 +46,26 @@ def test_live_looper_one():
     """Test the live looper function."""
     # We use a mock input via a StringIO object instead of 'raw_input',
     # which requires human intervention.
-    test_string = "1: i=7 t=60 div=17\n1: c d e f g'\ndone\n"
+    test_string = (
+        "1: i=7 t=60 div=17\n"
+        "1: (c d e) .f (g a b) c'- | c'2 .c,, .c,, c,,2 ||\ndone\n"
+    )
     fp = StringIO(test_string)
     with mock.patch("microcsound.main.live_input_func", dummy_live_input_func(fp)):
         result = live_loop_in()
         result_2 = process_buffer(result, rt_mode=True)
     expected = (
-        "i7.0 0.000 0.230  -3  261.62557  0.5  0  \n"
-        "i7.0 0.250 0.230  -3  295.66718  0.5  0  \n"
+        "i7.0 0.000 -0.250  -3  261.62557  0.5  0  \n"
+        "i7.0 0.250 -0.250  -3  295.66718  0.5  0  \n"
         "i7.0 0.500 0.230  -3  334.13815  0.5  0  \n"
-        "i7.0 0.750 0.230  -3  348.04364  0.5  0  \n"
-        "i7.0 1.000 0.230  -3  786.65923  0.5  0  \n"
+        "i7.0 0.750 0.200  -3  348.04364  0.5  0  \n"
+        "i7.0 1.000 -0.250  -3  393.32962  0.5  0  \n"
+        "i7.0 1.250 -0.250  -3  444.50801  0.5  0  \n"
+        "i7.0 1.500 0.230  -3  502.34551  0.5  0  \n"
+        "i7.0 1.750 0.730  -3  523.25113  0.5  0  \n"
+        "i7.0 2.500 0.200  -3  65.40639  0.5  0  \n"
+        "i7.0 2.750 0.200  -3  65.40639  0.5  0  \n"
+        "i7.0 3.000 0.480  -3  65.40639  0.5  0  \n"
     )
     assert expected in result_2[1]
 
