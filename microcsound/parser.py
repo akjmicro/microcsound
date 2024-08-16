@@ -42,7 +42,7 @@ def parser(inst_line):
         # a variable assignment:
         elif re.match(
             r"(?P<type>div|edo|mix|pan|gr|gv|gs|nls|t|i)[=]"
-            r"(?P<value>(?:[0-9]{1,5}[.]?[0-9]{0,5}|\"<\"))",
+            r"(?P<value>(?:[-]?[0-9]{1,5}[.]?[0-9]{0,5}|\"<\"))",
             event,
         ):
             handlers.handle_global_variable_event(event)

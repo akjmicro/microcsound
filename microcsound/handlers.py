@@ -140,12 +140,10 @@ def handle_time_report(event):
 
 
 def handle_attack(event):
-    if "." in event[1:]:
+    if "." in event[1:] or event[1] == "-":
         state_obj.default_attack = float(event[1:])
     elif "<" in event[1:]:
         state_obj.default_attack = "<"
-    elif event[1] == "-":  # decibel notation:
-        state_obj.default_attack = float(event[1:])
     else:
         if len(event[1:]) == 2:
             state_obj.default_attack = eval("%s/99." % event[1:])

@@ -44,12 +44,12 @@ class State(object):
         self.pedal_down = False
         self.arrival = 0
         # other defaults:
-        self.default_attack = 0.66
+        self.default_attack = -3   # now in db (decibels from 0 full-scale)
         self.pan = 0.5
-        self.mix = 1
+        self.mix = 0               # now in db (decibles from 0 full-scale)
         self.gaussian_rhythm = 0
-        self.gaussian_volume = 0  ## gaussian volume variance
-        self.gaussian_staccato = 0  ## gaussian staccato variance
+        self.gaussian_volume = 0   # gaussian volume variance
+        self.gaussian_staccato = 0 # gaussian staccato variance
 
 
 # we instatiate a singleton:

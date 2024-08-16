@@ -12,8 +12,6 @@ gkwet           init        0
 gkroomsize      init        0.75
 gkroomfco       init        7000
 
-gir             ftgen       1, 0, 65536, 10, 1   ;; sine
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Deliberately low-fi-ish (8-bitish) Tables                 ;;;          
 ;;; gir ftgen ifn, itime, isize, igen, iarga [, iargb ] [...] ;;;
@@ -24,6 +22,9 @@ gisaw           ftgen           3,  0,  256,  7,   0,  128,  1,  0,    -1,  128,
 gisquare        ftgen           4,  0,  256,  7,   1,  128,  1,  0,    -1,  128,  -1
 giquarter       ftgen           5,  0,  256,  7,   1,  64,   1,  0,    -1,  192,  -1
 gieighth        ftgen           6,  0,  256,  7,   1,  32,   1,  0,    -1,  224,  -1
+
+;;; sine for vco
+gibigsine       ftgen           7, 0, 65536, 10, 1   ;; sine
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; ------------now the UDOs and instruments ----------- ;;;
@@ -66,10 +67,10 @@ instr 1    ;;;-- basic waveforms for 8-bit music --;;;
         else
     icorrection     =               0.84
         endif
-    iamp            =               ampdb((p4 * icorrection * 60) - 60)
+    iamp            =               ampdbfs(p4) * icorrection
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     iatt            =               p9
     idec            =               p10
     isus            =               p11
@@ -110,11 +111,11 @@ instr 2    ;;; FM instrument (somewhat complex, 17 user params)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;---------standard microcsound p-fields------;;
     idur            =               abs(p3)
-    iamp            =               ampdb(p4 * 60 - 60)
+    iamp            =               ampdbfs(p4)
     ipch            =               p5
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     ;;----extra p-fields, use dbl-quotes with '%' between parameters---;;
     ;;----to change from within microcsound------------------;;
     imodratio       =               p8    ;; modulator ratio to carrier (carrier fixed at '1')
@@ -170,10 +171,10 @@ instr 3   ;;; 'brassy' instrument using sawtooth from vco
     ;;;;;;;;;;;;;;;;;;;;;;;
     ;;; variables setup ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;
-    iamp            =               p4
+    iamp            =               ampdbfs(p4)
     icps            =               p5
     ipan            =               p6
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     ibrmin          =               p8
     ibrmax          =               p9
     iatt            =               p10
@@ -184,15 +185,14 @@ instr 3   ;;; 'brassy' instrument using sawtooth from vco
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ibrightmin      =               icps * ibrmin * iamp
     ibrightmax      =               icps * ibrmax * iamp
-    iampscl         =               2.9
     ;;;;;;;;;;;;;
     ;;; audio ;;;
     ;;;;;;;;;;;;;
     kndxenv         expsegr         (ibrightmin), iatt, (ibrightmax), irel*5, (ibrightmin), irel, (ibrightmin)
-    aenv            expsegr         (0.01), iatt, (iamp * iampscl), irel, 0.01
+    aenv            expsegr         (0.01), iatt, iamp*2.9, irel, (0.01)
     aenv            =               aenv - 0.01
-    asig            vco             1, icps*ipchmul, 0
-    asig            tonex           asig*aenv, kndxenv, 3
+    asig            vco             1, icps*ipchmul, 0, 0.98, gibigsine
+    asig            tonex           asig * aenv, kndxenv, 3
     asig            dcblock2        asig
     asigL, asigR    pan2            asig, ipan
     gabusL          +=              asigL * imix
@@ -203,10 +203,10 @@ instr 4    ;;; 'brassy' instrument using FM 'foscili'
     ;;;;;;;;;;;;;;;;;;;;;;;
     ;;; variables setup ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;
-    iamp            =               p4
+    iamp            =               ampdbfs(p4)
     icps            =               p5
     ipan            =               p6
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     ibrightmin      =               p8
     ibrightmax      =               p9
     iatt            =               p10
@@ -217,13 +217,12 @@ instr 4    ;;; 'brassy' instrument using FM 'foscili'
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; intermediate calcs ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
-    iampscl         =               2.36
     ibright         =               (ibrightmax - ibrightmin) * iamp
     ;;;;;;;;;;;;;
     ;;; audio ;;;
     ;;;;;;;;;;;;;
     kndxenv         expsegr         ibrightmin, iatt, ibright, irel, ibrightmin
-    aaenv           expsegr         0.01, iatt, iamp * iampscl, irel, 0.01
+    aaenv           expsegr         0.01, iatt, iamp, irel, 0.01
     aaenv           =               aaenv - 0.01
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; FM foscili opcode is:                                   ;;;
@@ -242,10 +241,10 @@ instr 5    ;;; Plucked, clav-like instrument, using `faust_wguide`.
     ;;; `faust_wguide`, as the name implies, was designed in `faust`, ;;;
     ;;; and added as an opcode to `diet_csound`.                      ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    iamp            =               p4
+    iamp            =               ampdbfs(p4)
     icps            =               p5
     ipan            =               p6
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; superpluck params -- at some point, there may be a version of ;;;
     ;;; this where these variables are fed in from the score.         ;;;
@@ -271,11 +270,15 @@ instr 5    ;;; Plucked, clav-like instrument, using `faust_wguide`.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; actual sounding stuff, a 'superpluck' tone generator ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    aexc            rand            0.4
-    aexc            butlp           aexc, icutoff_range * 2 + icutoff_min
+    ;;; excitation
+    anoise          rand            iamp
+    afltnoise       butlp           anoise, icutoff_range * 2 + icutoff_min
+    aexc            balance2        afltnoise, anoise
     kexcenv         expsegr         iexcmin, iexctime, iamp, iexctime, iexcmin, iexctime, iexcmin
     kexcenv         =               kexcenv - iexcmin
+    ;;; feed excitation signal to waveguide
     asig            faust_wguide    aexc * kexcenv, icps, ires
+    ;;; amp and filter envelopes
     kenv            expsegr         iexcmin, iatt, iamp, irel, iexcmin
     kenv            =               kenv - iexcmin
     kfenv           expsegr         iexcmin, iatt, 1, ifcdec, iexcmin, irel, iexcmin
@@ -283,7 +286,9 @@ instr 5    ;;; Plucked, clav-like instrument, using `faust_wguide`.
     ksweep          =               (kfenv * iamp * icutoff_range) + icutoff_min
     aflt            butlp           asig * kenv, ksweep
     aflt            butlp           aflt, ksweep
-    aoutL, aoutR    pan2            aflt, ipan
+    ;;; renormalize/balance the signal
+    aout            balance2        aflt, asig
+    aoutL, aoutR    pan2            aout, ipan
     aoutL           dcblock2        aoutL
     aoutR           dcblock2        aoutR
     gabusL          +=              aoutL * imix
@@ -297,10 +302,10 @@ endin
 instr 100    ;;;--kick--;;;
     idur            =               p3
     ipch            =               p5
-    iamp            =               ampdb(p4 * 60 - 60)
+    iamp            =               ampdbfs(p4)
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     istartpitch     =               120
     iendpitch       =               70
     iampscale       =               1.1
@@ -314,10 +319,10 @@ endin
 instr 101    ;;;--snare--;;;
     idur            =               p3
     ipch            =               p5
-    iamp            =               ampdb(p4 * 60 - 60)
+    iamp            =               ampdbfs(p4)
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     iampscale       =               0.5
     idecay          =               0.1
     islope          =               0.1
@@ -331,10 +336,10 @@ endin
 instr 102    ;;;--hihat closed--;;;
     idur            =               p3
     ipch            =               p5
-    iamp            =               ampdb(p4 * 60 - 60)
+    iamp            =               ampdbfs(p4)
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     idecay          =               0.06
     islope          =               0.06
     aamp            expon           iamp, idecay, iamp*islope
@@ -346,10 +351,10 @@ endin
 instr 103    ;;;--hihat open--;;;
     idur            =               p3
     ipch            =               p5
-    iamp            =               ampdb(p4 * 60 - 60)
+    iamp            =               ampdbfs(p4)
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1 - p6)
-    imix            =               p7
+    imix            =               ampdbfs(p7)
     iampscale       =               0.6   ;; used to be 0.5
     islope          =               0.2
     idecay          =               0.2
@@ -390,10 +395,7 @@ instr 201  ;;; init instrument 200 (use this directly to initialize the mixer
     ;;; This translates to: to turn the master bus mixer on, use instrument 201. ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; notice p4, p6, and p7 are ignored
-    kdum1           =               p4
     kon             =               p5
-    kdum2           =               p6
-    kdum3           =               p7
                     event_i         "i", 200, 0 , -1
 endin
 
