@@ -4,11 +4,11 @@
 # setup mixer
 1: div=0 i=201 @0 1 &-1 i=202 @0 "0.63%0.5%0.8%4000" 1 &-1
 # setup instruments
-1: div=31 i=3.1 "6%20%0.06%0.07%1.0" pan=0.7 mix=-12 nls=0.04 @-3
-2: div=31 i=3.2 "6%20%0.07%0.07%1.0" pan=0.3 mix=-12 nls=0.04 @-3
-3: div=31 i=3.3 "6%20%0.07%0.07%1.0" pan=0.9 mix=-12 nls=0.04 @-3
-4: div=31 i=3.4 "6%20%0.08%0.07%1.0" pan=0.1 mix=-12 nls=0.04 @-3
-5: div=31 i=3.5 "6%20%0.09%0.07%0.5" pan=0.5 mix=-12 nls=0.04 @-3
+1: div=31 i=3.1 "2%32%1%0.03%0.09%2.5%1.0%0.0"  pan=0.7  mix=-12 nls=0.04 @-3
+2: div=31 i=3.2 "2%32%1%0.03%0.09%2.5%1.0%0.0"  pan=0.3  mix=-12 nls=0.04 @-3
+3: div=31 i=3.3 "2%24%2%0.03%0.09%2.3%1.0%0.0"  pan=0.9  mix=-9  nls=0.04 @-3
+4: div=31 i=3.4 "2%24%2%0.03%0.09%2.3%1.0%0.0"  pan=0.1  mix=-9  nls=0.04 @-3
+5: div=31 i=3.5 "2%16%2%0.03%0.09%2.6%0.66%1.0" pan=0.5  mix=-9  nls=0.04 @-3
 # music begins
 1: t=201 1/4 z4 | z20                                             |
 2:       1/4 z4 | z20                                             |
@@ -25,7 +25,7 @@
 1:  z4      | e'2 e'e' | d'3  b | c'b c'd' | e'2 c'2 | b2  e'2- | e'2 d'2 |
 2:  a2  aa  | g2  ze   | fe  fg | a2  f2   | e2  a2- | a2 ^g2   | a4      |
 3:  g2  f2  | e2  a2-  | ag  f2 | e2  a2   | a4      | z4       | d2 dd   |
-4: ^c2  d2- | d2 ^c2   | dd  dd | c3   a,  | cb, cd  | e4       | f4      | 
+4: ^c2  d2- | d2 ^c2   | dd  dd | c3   a,  | cb, cd  | e4       | f4      |
 5:  a,2 d2  | g,2 a,2  | d,4    | a,4-     | a,4     | z4       | z4      |
 #
 1: e'4-     | e'4      | z4        | z4      | e'2 e'e' |  d'3  b   | c'b c'd' |
@@ -34,7 +34,7 @@
 4: e4       | ze   ee  | d3     b, | cb, cd  | e2    c2 |  b,2 e2-  | e2   d2- |
 5: a,2 a,a, | g,3   e, | f,e, f,g, | a,2 f,2 | e,2 a,2- |  a,2 g,2- | g,2  f,2 |
 #
-1: e'2   c'2     |     b2 e'2- | e'2 d'2- | d'2 c'2- | c'2 b2- | b2    a2-   | 
+1: e'2   c'2     |     b2 e'2- | e'2 d'2- | d'2 c'2- | c'2 b2- | b2    a2-   |
 2: g2    e2      |     z4      | a2  aa   | g3    e  | fe  fg  | e2    c2    |
 3: z2    a2-     |     a2 g2-  | g2  f2   | e3    c  | d2  d2  | c3      a,  |
 4: dc c 1/8 b,a, | 1/4 b,3 b,  | ^c2 d2   | eg   gg  | f3    d | ed    e^f   |
@@ -46,10 +46,10 @@
 4: g^f  ed | ca, d2-  | d2 ^c2  | d4-       | d4      | z4       |
 5: e,4     | f,4      | e,3  a, | d,4       | z d  dd | c3    a, |
 #
-1: a'2    g'2- | g'2  f'2- | f'2  e'2- | e'2  d'2- |  d'2 ^c'2 | d'4    | 
+1: a'2    g'2- | g'2  f'2- | f'2  e'2- | e'2  d'2- |  d'2 ^c'2 | d'4    |
 2: d'3    d'   | c'3   c'  | b4        | a4        |  za   aa  | f3  d |
 3: dc     d_b, | cb,  ca,  | b,a, b,c  | dc   a,b, | ^cd   ea, | a,4   |
-4: z4          | a2   aa   | g3   g    | f3     f  |  e4       | dd dd |
+4: z4          | a2   aa   | g3     g  | f3     f  |  e4       | dd dd |
 5: _b,a, _b,g, | a,g, a,f, | g,f, g,e, | f,e, f,g, |  a,4      | d,4   |
 #
 1: z4        | z4        | a'2  a'a' | g'3    e' | f'e' f'g'  | e'2   a'2- |
@@ -62,7 +62,7 @@
 2: b4       |  a4         |  z4      | zg  gf   |  e2   f2  | e^g ^g^g  |
 3: e4       |  ec    cb,  |  a,2 b,2 | b,4      |  z4       | zb,  b,b, |
 4: ed  b,2  | ^ce    ee   |  d2  d2  | e2  e2   |  a,2  d2  | e4        |
-5: e,4      |  a,,a, a,g, | ^f,2 zg, | e,4      |  a,2  d2  | ee,  e,d, |
+5: e,4      |  a,,a, a,g, | ^f,2 zg, | e,4      |  z4       | ze,  e,d, |
 #
 1: 1/4  za' a'g' | ^f'2 zg' | 1/8  e'2e'2 e'3e' | a'4   e'4   | f'4  e'2a'2- |  a'2 g'4 f'2  |
 2: 1/4  a4       |  z4      | 1/8  z8           | z2a2  a3g   | f4  ^c4      |  d4    e2f2   |
@@ -94,17 +94,17 @@
 4: 1/4  da, d2  | zb,  e2  |  z^c  ^f2-  | ^f2    e2  |  a,4      |  ee ^c2  |
 5: 1/4  d,3  d, | g,2  ze, |  a,2   z^f, |  b,2   g,2 | ^f,4      |  e,2 za, |
 #
-1: ^f'2 zg' | e'3  f  |  d'2  e'c'- | c'd' bc'  | ab   c'd'  | e'^f'  g'2 | 
-2:  d2  zd' | c'3  c' |  d' b2  c'  | a2   bg   | a^f  ga    | b  c'2   b | 
+1: ^f'2 zg' | e'3  f  |  d'2  e'c'- | c'd' bc'  | ab   c'd'  | e'^f'  g'2 |
+2:  d2  zd' | c'3  c' |  d' b2  c'  | a2   bg   | a^f  ga    | b  c'2   b |
 3:  a2  zd  | gg  a2  |  f  g2  e   | f2   de   | a,d  ca,   | ec     g2  |
 4:  zd  b,2 | ze  c2  |  zg   e2    | a d2 g    | cd   g,d   | dc     d2  |
 5:  d,2 zg, | c,c a,2 | _b, g,2 a,  | f,2  g,e, | f,d, e,^f, | g,a,   g,2 |
 # CADENCE
-1: e'2 zg' | f'2 e'2 |  e'2 z @-9 g' | f'2 e'2 |  e'4-          | 
-2: c'2 zg  | a2  a2  | ^g2  z @-9 c' | a2  a2  | ^g4            | 
-3: g2  ze  | c2  c2  |  b,2 z @-9 e  | c2  c2  |  b, @-3 e ee | 
-4: e2  zc  | a,2 a,2 |  b,2 z @-9 g, | a,2 a,2 |  b,4           |
-5: c,2 zc, | f,2 a,2 |  e,2 z @-9 c, | f,2 a,2 |  e,4           |
+1: e'2 z @-8 g' | f'2 e'2 |  e'2 z @-12 g' | f'2 e'2 |  e'4-        |
+2: c'2 z @-8 g  | a2  a2  | ^g2  z @-12 c' | a2  a2  | ^g4          |
+3: g2  z @-8 e  | c2  c2  |  b,2 z @-12 e  | c2  c2  |  b, @-3 e ee |
+4: e2  z @-8 c  | a,2 a,2 |  b,2 z @-12 g, | a,2 a,2 |  b,4         |
+5: c,2 z @-8 c, | f,2 a,2 |  e,2 z @-12 c, | f,2 a,2 |  e,4         |
 #
 1: e'4             | z4 @-3           |
 2: z @-3 c' c'c' | b3            g  |
@@ -115,11 +115,11 @@
 1: 1/4 z4        | z4      | e'2 e'e' | d'3   b  | c'b c'd' | e'2 c'2        |
 2: 1/4 ag   ab   | e2  a2  | g2  e2   | ^f2 g2   | a3    f  | g2  e2         |
 3: 1/4 a,2  d2   | c2  a,2 | b,2 c2   | d2  b,2  | a,4      | z2  a2-        |
-4: 1/4 d3     b, | cb, cd  | e2  c2   | b,2 e2-  | e2  d2   | dc  c 1/8 b,a, | 
+4: 1/4 d3     b, | cb, cd  | e2  c2   | b,2 e2-  | e2  d2   | dc  c 1/8 b,a, |
 5: 1/4 f,e, f,g, | a,2 f,2 | e,2 a,2- | a,2 g,2- | g,2 f,2  | e,2 a,,2       |
 #
 1: 1/4 b2 e'2- |  e'2 d'2- | d'2 c'2- | c'2 b2-  | b2    a2-  | a2 ^g2  |
-2: 1/4 z4      |  a2  aa   | g3    e  | fe  fg   | e2    c2   | b,2 e2- | 
+2: 1/4 z4      |  a2  aa   | g3    e  | fe  fg   | e2    c2   | b,2 e2- |
 3: 1/4 a2 g2-  |  g2  f2   | e3    c  | d3   d   | c3      a, | e2  b,2 |
 4: 1/4 b,3  b, | ^c2  d2   | eg  gg   | f3   d   | ed    e^f  | g^f ed  |
 5: 1/4 e,4     |  z4       | ze, e,e, | d,3  b,, | c,b,, c,d, | e,4     |

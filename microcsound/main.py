@@ -183,7 +183,7 @@ def main():
 
     # stuff relating to picking an orchestra file:
     immediate_orc = "./" + args.orc_file
-    directory_orc = config.ORC_DIR + "/" + args.orc_file
+    directory_orc = config.ORC_DIR / args.orc_file
     if os.path.exists(args.orc_file):
         chosen_orc = args.orc_file
     elif os.path.exists(immediate_orc):

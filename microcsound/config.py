@@ -22,7 +22,7 @@ with open(Path(__file__).parent.parent / "pyproject.toml", "rb") as pyproject:
     project_data = tomllib.load(pyproject)
 
 
-ORC_DIR = user_config.get("ORC_DIR", "/usr/local/share/microcsound")
+ORC_DIR = user_config.get("ORC_DIR", Path(__file__).parent / "share/data/")
 DEFAULT_ORC_FILE = user_config.get("DEFAULT_ORC_FILE", "microcsound.orc")
 NORMAL_CSOUND_COMMAND_STUB = user_config.get(
     "NORMAL_CSOUND_COMMAND_STUB", "csound -d --messagelevel=0 --nodisplays -W"

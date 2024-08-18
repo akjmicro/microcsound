@@ -3,7 +3,7 @@ ksmps   =  128
 nchnls  =  2
 0dbfs   =  1
 
-gabusL  init    0 
+gabusL  init    0
 gabusR  init    0
 
 ;; mixer variables, controlled by instr 202
@@ -13,7 +13,7 @@ gkroomsize      init        0.75
 gkroomfco       init        7000
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Deliberately low-fi-ish (8-bitish) Tables                 ;;;          
+;;; Deliberately low-fi-ish (8-bitish) Tables                 ;;;
 ;;; gir ftgen ifn, itime, isize, igen, iarga [, iargb ] [...] ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 gisine          ftgen           1,  0,  256,  10,  1
@@ -67,7 +67,7 @@ instr 1    ;;;-- basic waveforms for 8-bit music --;;;
         else
     icorrection     =               0.84
         endif
-    iamp            =               ampdbfs(p4) * icorrection
+    iamp            =               ampdbfs(p4)*icorrection
     ipanr           =               sqrt(p6)
     ipanl           =               sqrt(1-p6)
     imix            =               ampdbfs(p7)
@@ -97,9 +97,9 @@ instr 1    ;;;-- basic waveforms for 8-bit music --;;;
     kenv            linseg          iamp, idur-irel, iamp, irel, 0
         endif
     ;; end legato stuff
-    aout            oscil           kenv * kampline, kpchline, iwav, -1
-    gabusL          +=              aout * ipanl * imix * icorrection
-    gabusR          +=              aout * ipanr * imix * icorrection
+    aout            oscil           kenv*kampline, kpchline, iwav, -1
+    gabusL          +=              aout*ipanl*imix*icorrection
+    gabusR          +=              aout*ipanr*imix*icorrection
 endin
 
 instr 2    ;;; FM instrument (somewhat complex, 17 user params)
@@ -126,7 +126,7 @@ instr 2    ;;; FM instrument (somewhat complex, 17 user params)
     irel            =               p13   ;; release time in seconds
     imodatt         =               p14   ;; mod attack time in seconds
     imoddec         =               p15   ;; mod decay time in seconds
-    imodsus         =               p16   ;; mod sustain lvl, 0-1 
+    imodsus         =               p16   ;; mod sustain lvl, 0-1
     imodrel         =               p17   ;; mod release time in seconds
     ifltcut         =               p18   ;; filter cutoff freq
     ifltq           =               p19   ;; filter resonance ('Q') between 0-1
@@ -171,32 +171,41 @@ instr 3   ;;; 'brassy' instrument using sawtooth from vco
     ;;;;;;;;;;;;;;;;;;;;;;;
     ;;; variables setup ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;
+    idur            =               p3
     iamp            =               ampdbfs(p4)
     icps            =               p5
     ipan            =               p6
     imix            =               ampdbfs(p7)
     ibrmin          =               p8
     ibrmax          =               p9
-    iatt            =               p10
-    irel            =               p11
-    ipchmul         =               p12
+    ifltstages      =               p10
+    iatt            =               p11
+    irel            =               p12
+    ifltrelfac      =               p13
+    ivol8           =               p14
+    ivol16          =               p15
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; intermediate calcs ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ibrightmin      =               icps * ibrmin * iamp
-    ibrightmax      =               icps * ibrmax * iamp
+    ibrightmin      =               icps*ibrmin
+    ibrightmax      =               icps*ibrmax*iamp
+    ibrightmid      =               ((ibrightmax - ibrightmin)*0.1) + ibrightmin
+    idurmid         =               idur - (iatt + irel)
     ;;;;;;;;;;;;;
     ;;; audio ;;;
     ;;;;;;;;;;;;;
-    kndxenv         expsegr         (ibrightmin), iatt, (ibrightmax), irel*5, (ibrightmin), irel, (ibrightmin)
-    aenv            expsegr         (0.01), iatt, iamp*2.9, irel, (0.01)
-    aenv            =               aenv - 0.01
-    asig            vco             1, icps*ipchmul, 0, 0.98, gibigsine
-    asig            tonex           asig * aenv, kndxenv, 3
+    kndxenv         linsegr         (ibrightmin), iatt, (ibrightmax), 0.001, (ibrightmid*0.25), irel*3, (ibrightmin)
+    kndxenv         lagud           kndxenv, iatt*0.2, idur*ifltrelfac
+    aenv            linsegr         (0), iatt, (iamp*1.5), irel*3, (iamp*1.25), idurmid, (iamp*1.25), irel, (0)
+    aenv            lagud           aenv, iatt*0.2, irel
+    asig8           vco             ivol8,  icps,     0, 0.98, gibigsine, 1, 0.999, 0.25
+    asig16          vco             ivol16, icps*0.5, 0, 0.98, gibigsine, 1, 0.999, 0.25
+    asig            =               asig8 + asig16
+    asig            tonex           asig*aenv, kndxenv, ifltstages
     asig            dcblock2        asig
     asigL, asigR    pan2            asig, ipan
-    gabusL          +=              asigL * imix
-    gabusR          +=              asigR * imix
+    gabusL          +=              asigL*imix
+    gabusR          +=              asigR*imix
 endin
 
 instr 4    ;;; 'brassy' instrument using FM 'foscili'
@@ -217,7 +226,7 @@ instr 4    ;;; 'brassy' instrument using FM 'foscili'
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; intermediate calcs ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ibright         =               (ibrightmax - ibrightmin) * iamp
+    ibright         =               (ibrightmax - ibrightmin)*iamp
     ;;;;;;;;;;;;;
     ;;; audio ;;;
     ;;;;;;;;;;;;;
@@ -232,8 +241,8 @@ instr 4    ;;; 'brassy' instrument using FM 'foscili'
     asig            lowpass2        asig, 8192, 40
     asig            dcblock2        asig
     asigL, asigR    pan2            asig, ipan
-    gabusL          +=              asigL * imix
-    gabusR          +=              asigR * imix
+    gabusL          +=              asigL*imix
+    gabusR          +=              asigR*imix
 endin
 
 instr 5    ;;; Plucked, clav-like instrument, using `faust_wguide`.
@@ -250,7 +259,7 @@ instr 5    ;;; Plucked, clav-like instrument, using `faust_wguide`.
     ;;; this where these variables are fed in from the score.         ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; keyboard tracking
-    itrack          =               log2(icps * 0.015625) * 0.25
+    itrack          =               log2(icps*0.015625)*0.25
     ires            =               31
     iexcmin         =               0.001
     irndattime      rnd             812
@@ -259,40 +268,40 @@ instr 5    ;;; Plucked, clav-like instrument, using `faust_wguide`.
     iatt            =               0.005
     ifcdecmin       =               7
     ifcdecmax       =               5
-    ifcdectrack     =               (ifcdecmax - ifcdecmin) * itrack
+    ifcdectrack     =               (ifcdecmax - ifcdecmin)*itrack
     ifcdec          =               ifcdecmin + ifcdectrack
     irel            =               0.03
     ;;; filter
     icutoff_min     =               850
     icutoff_max     =               4500
-    icutoff_track   =               (icutoff_max - icutoff_min) * iamp
+    icutoff_track   =               (icutoff_max - icutoff_min)*iamp
     icutoff_range   =               icutoff_min + icutoff_track
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; actual sounding stuff, a 'superpluck' tone generator ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;; excitation
     anoise          rand            iamp
-    afltnoise       butlp           anoise, icutoff_range * 2 + icutoff_min
+    afltnoise       butlp           anoise, icutoff_range*2 + icutoff_min
     aexc            balance2        afltnoise, anoise
     kexcenv         expsegr         iexcmin, iexctime, iamp, iexctime, iexcmin, iexctime, iexcmin
     kexcenv         =               kexcenv - iexcmin
     ;;; feed excitation signal to waveguide
-    asig            faust_wguide    aexc * kexcenv, icps, ires
+    asig            faust_wguide    aexc*kexcenv, icps, ires
     ;;; amp and filter envelopes
     kenv            expsegr         iexcmin, iatt, iamp, irel, iexcmin
     kenv            =               kenv - iexcmin
     kfenv           expsegr         iexcmin, iatt, 1, ifcdec, iexcmin, irel, iexcmin
     kfenv           =               kfenv - iexcmin
-    ksweep          =               (kfenv * iamp * icutoff_range) + icutoff_min
-    aflt            butlp           asig * kenv, ksweep
+    ksweep          =               (kfenv*iamp*icutoff_range) + icutoff_min
+    aflt            butlp           asig*kenv, ksweep
     aflt            butlp           aflt, ksweep
     ;;; renormalize/balance the signal
     aout            balance2        aflt, asig
     aoutL, aoutR    pan2            aout, ipan
     aoutL           dcblock2        aoutL
     aoutR           dcblock2        aoutR
-    gabusL          +=              aoutL * imix
-    gabusR          +=              aoutR * imix
+    gabusL          +=              aoutL*imix
+    gabusR          +=              aoutR*imix
 endin
 
 ;;;;;;;;;;;;;
@@ -313,8 +322,8 @@ instr 100    ;;;--kick--;;;
     k1              expon           istartpitch,  idecay,  iendpitch
     aenv            expon           iamp,         idecay,  0.001
     a1              poscil          aenv,         k1,          2
-    gabusL          +=              a1 * ipanl * imix * iampscale
-    gabusR          +=              a1 * ipanr * imix * iampscale
+    gabusL          +=              a1*ipanl*imix*iampscale
+    gabusR          +=              a1*ipanr*imix*iampscale
 endin
 
 instr 101    ;;;--snare--;;;
@@ -327,11 +336,11 @@ instr 101    ;;;--snare--;;;
     iampscale       =               0.8
     idecay          =               0.1
     islope          =               0.1
-    aenv            expon           iamp, idecay, iamp * islope
+    aenv            expon           iamp, idecay, iamp*islope
     a1              oscili          aenv, 147, 1
     arand           rand            aenv
-    gabusL          +=              (a1 + arand) * ipanl * imix * iampscale
-    gabusR          +=              (a1 + arand) * ipanl * imix * iampscale
+    gabusL          +=              (a1 + arand)*ipanl*imix*iampscale
+    gabusR          +=              (a1 + arand)*ipanl*imix*iampscale
 endin
 
 instr 102    ;;;--hihat closed--;;;
@@ -346,8 +355,8 @@ instr 102    ;;;--hihat closed--;;;
     islope          =               0.06
     aamp            expon           iamp, idecay, iamp*islope
     arand           rand            aamp
-    gabusL          +=              arand * ipanl * imix
-    gabusR          +=              arand * ipanl * imix
+    gabusL          +=              arand*ipanl*imix
+    gabusR          +=              arand*ipanl*imix
 endin
 
 instr 103    ;;;--hihat open--;;;
@@ -360,10 +369,10 @@ instr 103    ;;;--hihat open--;;;
     iampscale       =               0.9   ;; used to be 0.5
     islope          =               0.2
     idecay          =               0.2
-    aamp            expon           iamp, idecay, iamp * islope
+    aamp            expon           iamp, idecay, iamp*islope
     arand           rand            aamp
-    gabusL          +=              arand * ipanl * imix * iampscale
-    gabusR          +=              arand * ipanl * imix * iampscale
+    gabusL          +=              arand*ipanl*imix*iampscale
+    gabusR          +=              arand*ipanl*imix*iampscale
 endin
 
 instr 120    ;;;-----VIRTUAL DRUMKIT-----;;;
