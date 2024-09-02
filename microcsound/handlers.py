@@ -40,6 +40,8 @@ def handle_global_variable_event(event):
         state_obj.gaussian_staccato = float(val)
     elif evtype == "nls":
         state_obj.non_legato_space = float(val)
+    elif evtype == "sl":
+        state_obj.staccato_length = float(val)
     else:
         if val == "<":
             val = "<"

@@ -194,14 +194,14 @@ instr 3   ;;; 'brassy' instrument using sawtooth from vco
     ;;;;;;;;;;;;;
     ;;; audio ;;;
     ;;;;;;;;;;;;;
-    kndxenv         linsegr         (ibrightmin), iatt, (ibrightmax), 0.001, (ibrightmid*0.25), irel*3, (ibrightmin)
-    kndxenv         lagud           kndxenv, iatt*0.2, idur*ifltrelfac
+    andxenv         linsegr         (ibrightmin), iatt, (ibrightmax), 0.001, (ibrightmid*0.25), irel*3, (ibrightmin)
+    andxenv         lagud           andxenv, iatt*0.2, idur*ifltrelfac
     aenv            linsegr         (0), iatt, (iamp*1.5), irel*3, (iamp*1.25), idurmid, (iamp*1.25), irel, (0)
     aenv            lagud           aenv, iatt*0.2, irel
     asig8           vco             ivol8,  icps,     0, 0.98, gibigsine, 1, 0.999, 0.25
     asig16          vco             ivol16, icps*0.5, 0, 0.98, gibigsine, 1, 0.999, 0.25
     asig            =               asig8 + asig16
-    asig            tonex           asig*aenv, kndxenv, ifltstages
+    asig            tonex           asig*aenv, andxenv, ifltstages
     asig            dcblock2        asig
     asigL, asigR    pan2            asig, ipan
     gabusL          +=              asigL*imix
